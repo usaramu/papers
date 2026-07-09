@@ -1,0 +1,588 @@
+/*色とサイズの変数定義*/
+:root{
+    --color-primary: #1F6367; /*メインカラー*/
+    --color-primary-light: #cadbdc; /* メインカラーの薄い版 */
+    --color-primary-hover: #d4dfe0; /* ホバー時の背景 */
+    --color-bg: #FCF9F5;           /* ページ背景 */
+    --color-white: #fff;           /* 白 */
+    --color-border: #ddd;          /* 境界線 */
+    --color-text: #2D3748;            /* 本文テキスト */
+    --color-text-sub: #555;        /* サブテキスト */
+
+    --header-height: 72px;         /* ヘッダーの高さ */
+    --sidebar-width: 200px;        /* サイドバーの幅 */
+}
+
+/*基本設定*/
+*{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+  font-family: "Zen Kaku Gothic New", "Hiragino Sans", sans-serif;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+}
+
+/*ヘッダー*/
+.site-header {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  padding: 16px 24px;
+  height: var(--header-height);
+}
+
+.site-header h1 {
+  font-size: 28px;
+}
+
+/* ===== 2カラムレイアウト ===== */
+.layout {
+  display: flex;
+  height: calc(100vh - var(--header-height));
+}
+
+/* ===== サイドバー ===== */
+.sidebar {
+  width: var(--sidebar-width);
+  background-color: var(--color-bg);
+  border-right: 1px solid var(--color-border);
+  padding: 16px 0;
+  position: relative; 
+}
+
+.sidebar ul {
+  list-style: none;
+}
+
+.sidebar li {
+  padding: 12px 20px;
+  cursor: pointer;
+  color: var(--color-text-sub);
+  border-radius: 4px;
+  margin: 2px 8px;
+}
+
+.sidebar li:hover {
+  background-color: var(--color-primary-hover);
+  color: var(--color-primary);
+}
+
+.sidebar > ul > li.active {
+  background-color: var(--color-primary-light);
+  color: var(--color-primary);
+  font-weight: bold;
+}
+
+/* ===== メインコンテンツ ===== */
+.main-content {
+  flex: 1;
+  padding: 32px;
+  overflow-y: auto;
+}
+
+.main-content h2 {
+  font-size: 22px;
+  margin-bottom: 16px;
+  color: #C95B50;
+}
+
+/* ===== 問いメモ帳 ===== */
+
+.memo-input-area {
+  display: flex;
+  flex-direction: column; /* 縦並び */
+  gap: 8px;               /* 要素間のすき間 */
+  margin-bottom: 24px;
+}
+
+textarea {
+  padding: 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  font-size: 15px;
+  font-family: inherit; /* bodyのフォントを引き継ぐ */
+  resize: vertical;     /* 縦方向にだけリサイズ可能にする */
+  outline: none;
+}
+
+/* テキストエリアにフォーカスしたとき */
+textarea:focus {
+  border-color: var(--color-primary);
+}
+
+button {
+  align-self: flex-end; /* 右寄せ */
+  padding: 10px 24px;
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+button:hover {
+  opacity: 0.85;
+}
+
+/* ===== メモ一覧 ===== */
+
+#memo-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.memo-item {
+  background-color: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.memo-text {
+  font-size: 15px;
+  line-height: 1.6;
+  white-space: pre-wrap; /* 改行をそのまま表示する */
+}
+
+.memo-date {
+  font-size: 12px;
+  color: var(--color-text-sub);
+}
+
+.memo-delete-btn {
+  align-self: flex-end;
+  padding: 4px 12px;
+  font-size: 12px;
+  background-color: #e0e0e0;
+  color: #555;
+}
+
+.memo-delete-btn:hover {
+  background-color: #C95B50;
+  color: white;
+  opacity: 1;
+}
+
+/* ===== ページ切り替え ===== */
+.hidden {
+  display: none;
+}
+
+/* ===== フォーム ===== */
+.form-card {
+  background-color: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 24px;
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+label {
+  font-size: 13px;
+  font-weight: bold;
+  color: var(--color-text-sub);
+}
+
+input[type="text"] {
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  font-size: 15px;
+  font-family: inherit;
+  outline: none;
+}
+
+input[type="text"]:focus {
+  border-color: var(--color-primary);
+}
+
+/* ===== 資料カード ===== */
+.paper-card {
+  background-color: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.paper-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.paper-title {
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--color-primary);
+  text-align: left;
+  align-self: center;
+  word-break: normal;
+  overflow-wrap: break-word;
+}
+
+.paper-url {
+  font-size: 12px;
+  color: var(--color-text);
+  word-break: break-all;
+}
+
+.paper-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tag {
+  background-color: var(--color-primary-light);
+  color: var(--color-primary);
+  font-size: 12px;
+  padding: 2px 10px;
+  border-radius: 999px;
+}
+
+.paper-section {
+  font-size: 12px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  color:var(--color-text-sub)
+}
+
+.label {
+  display: block;
+  font-size: 12px;
+  font-weight: bold;
+  color: var(--color-text-sub);
+  color:#204445; 
+  margin-bottom: 2px;
+}
+
+.paper-date {
+  font-size: 12px;
+  color: var(--color-text-sub);
+  text-align: right;
+}
+
+.paper-delete-btn {
+  padding: 4px 12px;
+  font-size: 12px;
+  background-color: #e0e0e0;
+  color: #555;
+  flex-shrink: 0;
+}
+
+.paper-delete-btn:hover {
+  background-color: #C95B50;
+  color: white;
+  opacity: 1;
+}
+
+
+.paper-embed {
+  width: 100%;
+  height: 500px;
+  border: none;
+  border-radius: 6px;
+}
+
+/* ===== 資料リスト ===== */
+.paper-index {
+  background-color: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 16px 24px;
+  margin-bottom: 24px;
+}
+
+.paper-index h3 {
+  font-size: 15px;
+  color: var(--color-text);
+  margin-bottom: 8px;
+}
+
+.index-list {
+  list-style: disc;
+  padding-left: 20px;
+}
+
+.index-list li {
+  margin: 4px 0;
+}
+
+.index-list li a {
+  color: var(--color-text);
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.index-list li a:hover {
+  text-decoration: underline;
+}
+
+.paper-url-link {
+  display: block;
+  cursor: pointer;
+}
+
+.paper-embed-wrapper {
+  position: relative;
+}
+
+.paper-open-btn {
+  display: inline-block;
+  margin-bottom: 8px;
+  font-size: 13px;
+  color: var(--color-text-sub);
+  text-decoration: none;
+}
+
+.paper-open-btn:hover {
+  text-decoration: underline;
+}
+
+#paper-add-btn {
+  background-color: #C95B50 /* ← 好きな色に変えてください */
+}
+
+#paper-add-btn:hover {
+  background-color: #e6776d;
+}
+
+#memo-add-btn {
+  background-color: #C95B50
+}
+
+#memo-add-btn:hover {
+  background-color: #e6776d;
+}
+
+/* ヘッダーのタイトル */
+.site-header h1 {
+  font-family: "Kiwi Maru", serif;
+}
+
+/* ページの見出し */
+.main-content h2 {
+  font-family: "Kiwi Maru", serif;
+}
+
+.sub-item {
+  padding: 8px 20px 8px 32px !important;
+  font-size: 13px;
+  color: var(--color-text-sub);
+}
+
+.sub-item:hover {
+  color: var(--color-primary);
+  
+}
+
+/* ===== サイドバーリサイザー ===== */
+#sidebar-resizer {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 6px;
+  height: 100%;
+  cursor: col-resize;
+}
+
+/* ===== タブ ===== */
+.tab-bar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.tab-btn {
+  padding: 8px 12px;
+  background-color: var(--color-white);
+  color: var(--color-text-sub);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  font-size: 12px;
+  cursor: pointer;
+  align-self: auto;
+}
+
+.tab-btn:hover {
+  background-color: var(--color-primary-light);
+  color: var(--color-primary);
+  opacity: 1;
+}
+
+.tab-btn.active {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+.tab-btn.active:hover {
+  opacity: 0.85;
+}
+
+select {
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  font-size: 15px;
+  font-family: inherit;
+  outline: none;
+  background-color: var(--color-white);
+}
+
+/* ===== 編集ボタン ===== */
+.paper-edit-btn {
+  padding: 4px 12px;
+  font-size: 12px;
+  background-color: #e0e0e0;
+  color: #555;
+  margin-right: 4px;
+}
+
+.paper-edit-btn:hover {
+  background-color: var(--color-primary-light);
+  color: var(--color-primary);
+  opacity: 1;
+}
+
+.edit-save-btn {
+  background-color: var(--color-primary);
+}
+
+.edit-cancel-btn {
+  background-color: #e0e0e0;
+  color: #555;
+}
+
+.edit-cancel-btn:hover {
+  opacity: 0.85;
+}
+
+.paper-btns {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+/* ===== 編集フォーム ===== */
+.edit-title,
+.edit-url,
+.edit-reason,
+.edit-memo,
+.edit-citation {
+  font-size: 11px;
+}
+
+/* ===== メモボタン ===== */
+.memo-btns {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.memo-edit-btn {
+  padding: 4px 12px;
+  font-size: 12px;
+  background-color: #e0e0e0;
+  color: #555;
+}
+
+.memo-edit-btn:hover {
+  background-color: var(--color-primary-light);
+  color: var(--color-primary);
+  opacity: 1;
+}
+
+.edit-memo-text {
+  font-size: 13px;
+  width: 100%;
+}
+
+/* ===== タスクリスト ===== */
+#task-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.task-item {
+  background-color: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 6px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.task-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  flex: 1;
+}
+
+.task-checkbox {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: var(--color-primary);
+}
+
+.task-text {
+  font-size: 13px;
+}
+
+.task-done .task-text {
+  text-decoration: line-through;
+  color: var(--color-text-sub);
+}
+
+.task-delete-btn {
+  padding: 4px 12px;
+  font-size: 12px;
+  background-color: #e0e0e0;
+  color: #555;
+}
+
+.task-delete-btn:hover {
+  background-color: #f28b82;
+  color: white;
+  opacity: 1;
+}
+
+/* ===== タスクリストの文字を細くシンプルにする修正 ===== */
+
+.task-label {
+  font-weight: normal; /* 太字を解除して通常の細さにします */
+}
+
+.task-text {
+  font-size: 13px;
+  font-weight: normal; /* 念のためここでも通常の設定を上書き */
+  color: var(--color-text); /* 資料リストに近い標準のテキスト色にします */
+}

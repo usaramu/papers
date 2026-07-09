@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang ="ja">
+
+<head>
+    <meta charset ="CTF-8">
+    <meta name="viewpoint" content="width=device-width, initial-scale=1.0" />
+    <title>卒論 資料まとめ</title>
+    <!-- Zen Kaku Gothic New を読み込む -->
+<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@300;400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Kiwi+Maru:wght@400;500&display=swap" rel="stylesheet">
+    <!--style.cssを読み込む-->
+    <link rel ="stylesheet" href="style.css"/>
+    <!-- JavaScriptファイルを読み込む（defer = HTML読み込み後に実行） -->
+    <script src="main.js" defer></script>
+</head>
+
+<body>
+
+    <!--ヘッダー部分-->
+    <header class="site-header">
+        <h1>資料まとめ</h1>
+    </header>
+
+    <!--メインエリア-->
+    <div class="layout">
+
+        <!--左：サイドバー-->
+        <nav class="sidebar">
+        <div id="sidebar-resizer"></div>
+            <ul>
+                <li id="nav-paper" class="active">資料管理</li>
+                <li id="nav-paper-form" class="sub-item hidden">入力フォーム</li>
+                <li id="nav-paper-index" class="sub-item hidden">リスト</li>
+                <li id="nav-paper-cards" class="sub-item hidden">一覧</li>
+                <li id="nav-memo">メモ</li>
+                <li id="nav-memo-form" class="sub-item hidden">入力フォーム</li>
+                <li id="nav-memo-list" class="sub-item hidden">一覧</li>
+                <li id="nav-task">やること</li>
+            </ul>
+ 
+</ul>
+        </nav>
+
+        <!--右：メインコンテンツ-->
+        <main class="main-content">
+            <!-- タスク -->
+            <section id="page-task" class="page hidden">
+            <h2>やることリスト</h2>
+
+            <!-- 入力エリア -->
+            <div class="memo-input-area">
+                <input type="text" id="task-input" placeholder="タスクを入力..." />
+                <button id="task-add-btn">追加する</button>
+            </div>
+
+            <!-- タスク一覧 -->
+            <ul id="task-list"></ul>
+            </section>
+            <section id="page-memo" class="page hidden">
+            <h2 id="section-memo-form">入力フォーム</h2>
+            <div class="memo-input-area">
+            <!--入力エリア-->
+            <div class="memo-input-area">
+                <textarea
+                id="memo-input"
+                placeholder="書いてって～～"
+                rows="3"
+                ></textarea>
+                <button id="memo-add-btn">追加する</button>
+            </div>
+
+            <!--メモの一覧-->
+            <h2 id="section-memo-list">一覧</h2>
+            <ul id="memo-list"></ul>
+            </section>
+
+            <!--資料管理-->
+            <section id="page-paper" class="page">          
+                
+                 <!-- 登録フォーム -->
+                <h2 id="section-form">入力フォーム</h2>
+                <div class="form-card">
+                <div class="form-row">
+                    <label for="paper-title">タイトル</label>
+                    <input type="text" id="paper-title" placeholder="資料のタイトル" />
+                </div>
+                <div class="form-row">
+                    <label for="paper-url">レジュメ</label>
+                    <input type="text" id="paper-url" placeholder="Google Document" />
+                </div>
+                <div class="form-row">
+                    <label for="paper-memo">要旨</label>
+                    <textarea id="paper-memo" rows="3" placeholder="Abstract和訳"></textarea>
+                </div>
+                <div class="form-row">
+                    <label for="paper-reason">読んだ目的</label>
+                    <textarea id="paper-reason" rows="2" placeholder="きっかけ・文脈"></textarea>
+                </div>
+                <div class="form-row">
+                <label for="paper-category">カテゴリ</label>
+                <select id="paper-category">
+                    <option value="primary">一次資料</option>
+                    <option value="research">先行研究</option>
+                    <option value="draft">下書き</option>
+                </select>
+                </div>
+                <div class="form-row">
+                <label for="paper-citation">引用</label>
+                <textarea id="paper-citation" rows="2" placeholder=""></textarea>
+                </div>
+                <button id="paper-add-btn">登録する</button>
+                </div>
+                                <div class="tab-bar">
+                    <button class="tab-btn active" data-tab="all">すべて</button>
+                    <button class="tab-btn" data-tab="primary">一次資料</button>
+                    <button class="tab-btn" data-tab="research">先行研究</button>
+                    <button class="tab-btn" data-tab="draft">下書き</button>
+                </div>  
+                <h2 id="section-index">リスト</h2>
+                <div id="paper-index" class="paper-index"></div>
+                <h2 id="section-cards">一覧</h2>
+                <div id="paper-list"></div>
+            
+
+                
+            </section>
+
+        </main>
+    </div>
+</body>
+
+</html>
