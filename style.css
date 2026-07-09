@@ -143,7 +143,7 @@ button:hover {
   border-radius: 8px;
   padding: 16px;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 6px;
 }
 
@@ -223,8 +223,10 @@ input[type="text"]:focus {
   margin-bottom: 12px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
+  align-items: flex-start;
 }
+
 
 .paper-header {
   display: flex;
@@ -322,8 +324,16 @@ input[type="text"]:focus {
 }
 
 .index-list {
-  list-style: disc;
-  padding-left: 20px;
+  list-style: none;
+  padding-left: 0;
+}
+
+.index-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+  cursor: default;
 }
 
 .index-list li {
@@ -536,6 +546,7 @@ select {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 8px;
 }
 
 .task-label {
@@ -585,4 +596,31 @@ select {
   font-size: 13px;
   font-weight: normal; /* 念のためここでも通常の設定を上書き */
   color: var(--color-text); /* 資料リストに近い標準のテキスト色にします */
+}
+
+/* ===== ドラッグ＆ドロップ ===== */
+.drag-handle {
+  cursor: grab;
+  color: var(--color-text-sub);
+  font-size: 14px;
+  flex-shrink: 0; /* ← 縮まないようにする */
+  }
+
+.dragging {
+  opacity: 0.4;
+  border: 2px dashed var(--color-primary);
+}
+
+.memo-content {
+  flex: 1; /* 残りの横幅をすべて使う */
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.paper-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }

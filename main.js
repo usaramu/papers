@@ -192,10 +192,43 @@ function renderPapers() {
     const indexList = document.createElement('ul');
     indexList.className = 'index-list';
 
-    papers.forEach(function (paper) {
+    papers.forEach(function (paper, index) {
         const li = document.createElement('li');
-        li.innerHTML = `<a href="#paper-${paper.id}">${paper.title}</a>`;
+        li.className = 'index-item';
+        li.draggable = true;
+        li.dataset.index = index;
+        li.innerHTML = `<span class="drag-handle">☰</span><a href="#paper-${paper.id}">${paper.title}</a>`;
+
+        li.addEventListener('dragstart', function(){
+            li.classList.add('dragging');
+        });
+
+        li.addEventListener('dragend', function(){
+            li.classList.remove('dragging');
+            const newOrder = [...indexList.querySelectorAll('.index-item')].map(function(item){
+                return papers[Number(item.dataset.index)];
+            });
+            papers.length = 0;
+            newOrder.forEach(function(p){ papers.push(p); });
+            saveData();
+            // カードの順番だけ更新する
+            papers.forEach(function(paper){
+                const card = document.getElementById('paper-' + paper.id);
+                if(card) paperList.appendChild(card);
+            });
+        });
+
         indexList.appendChild(li);
+    });
+
+    indexList.addEventListener('dragover', function(event){
+        event.preventDefault();
+        const dragging = indexList.querySelector('.dragging');
+        const siblings = [...indexList.querySelectorAll('.index-item:not(.dragging)')];
+        const next = siblings.find(function(s){
+            return event.clientY <= s.getBoundingClientRect().top + s.getBoundingClientRect().height / 2;
+        });
+        indexList.insertBefore(dragging, next || null);
     });
 
     paperIndex.appendChild(indexList);
@@ -204,6 +237,8 @@ function renderPapers() {
         const card = document.createElement('div');
         card.className = 'paper-card';
         card.id = `paper-${paper.id}`;
+        card.draggable = true;
+        card.dataset.index = papers.indexOf(paper);
 
         const isGoogleDoc = paper.url && paper.url.includes('docs.google.com');
         const embedUrl = isGoogleDoc ? paper.url.replace('/edit', '/preview') : '';
@@ -226,23 +261,26 @@ function renderPapers() {
         const emoji = categoryEmoji[paper.category] || '📄';
 
         card.innerHTML = `
-      <div class="paper-header">
-        <div class="paper-title">${emoji} ${paper.title}</div>
-        <div class="paper-btns">
-          <button class="paper-edit-btn" data-id="${paper.id}">編集</button>
-          <button class="paper-delete-btn" data-id="${paper.id}">削除</button>
-        </div>
-      </div>
-      ${urlHTML}
-      ${paper.memo ? `<div class="paper-section"><span class="label">要旨</span>${paper.memo}</div>` : ''}
-      ${paper.reason ? `<div class="paper-section"><span class="label">読んだ目的</span>${paper.reason}</div>` : ''}
-      ${paper.citation ? `<div class="paper-section"><span class="label">引用</span>${paper.citation}</div>` : ''}
-      ${paper.category ? `<div class="paper-section"><span class="label">分類</span>${paper.category === 'primary' ? '一次資料' :
+            <div class="paper-content">
+                <div class="paper-header">
+                <div class="paper-title">${emoji} ${paper.title}</div>
+                <div class="paper-btns">
+                    <button class="paper-edit-btn" data-id="${paper.id}">編集</button>
+                    <button class="paper-delete-btn" data-id="${paper.id}">削除</button>
+                </div>
+                </div>
+                ${urlHTML}
+                ${paper.memo   ? `<div class="paper-section"><span class="label">要旨</span>${paper.memo}</div>` : ''}
+                ${paper.reason ? `<div class="paper-section"><span class="label">読んだ目的</span>${paper.reason}</div>` : ''}
+                ${paper.citation ? `<div class="paper-section"><span class="label">引用</span>${paper.citation}</div>` : ''}
+                ${paper.category ? `<div class="paper-section"><span class="label">分類</span>${
+                paper.category === 'primary' ? '一次資料' :
                 paper.category === 'research' ? '先行研究' :
-                    paper.category === 'draft' ? '下書き' : ''
-            }</div>` : ''}
-    <div class="paper-date">${paper.date}</div>
-    `;
+                paper.category === 'draft' ? '下書き' : ''
+                }</div>` : ''}
+                <div class="paper-date">${paper.date}</div>
+            </div>
+            `;
 
         card.querySelector('.paper-edit-btn').addEventListener('click', function () {
             const id = Number(card.id.replace('paper-', ''));
@@ -253,7 +291,76 @@ function renderPapers() {
             const id = Number(event.target.dataset.id);
             deletePaper(id);
         });
+
+        card.addEventListener('dragstart', function(){
+            card.classList.add('dragging');
+            });
+
+        card.addEventListener('dragend', function(){
+            card.classList.remove('dragging');
+            });
         paperList.appendChild(card);
+    });
+
+    // ドロップ処理
+    paperList.addEventListener('dragover', function(event){
+    event.preventDefault();
+    const dragging = paperList.querySelector('.dragging');
+    const siblings = [...paperList.querySelectorAll('.paper-card:not(.dragging)')];
+    const next = siblings.find(function(s){
+        return event.clientY <= s.getBoundingClientRect().top + s.getBoundingClientRect().height / 2;
+    });
+    paperList.insertBefore(dragging, next || null);
+    });
+
+   paperList.addEventListener('drop', function(){
+  const newOrder = [...paperList.querySelectorAll('.paper-card')].map(function(card){
+    return papers[Number(card.dataset.index)];
+  });
+  papers.length = 0;
+  newOrder.forEach(function(p){ papers.push(p); });
+  saveData();
+
+  // リストも更新する ← 追加
+  const paperIndex = document.getElementById('paper-index');
+  paperIndex.innerHTML = '';
+  const indexList = document.createElement('ul');
+  indexList.className = 'index-list';
+  papers.forEach(function (paper, index) {
+    const li = document.createElement('li');
+    li.className = 'index-item';
+    li.draggable = true;
+    li.dataset.index = index;
+    li.innerHTML = `<span class="drag-handle">☰</span><a href="#paper-${paper.id}">${paper.title}</a>`;
+
+    li.addEventListener('dragstart', function(){
+        li.classList.add('dragging');
+    });
+
+    li.addEventListener('dragend', function(){
+        li.classList.remove('dragging');
+        // ドラッグ終了時に順番を保存してカードも更新
+        const newOrder = [...indexList.querySelectorAll('.index-item')].map(function(item){
+            return papers[Number(item.dataset.index)];
+        });
+        papers.length = 0;
+        newOrder.forEach(function(p){ papers.push(p); });
+        saveData();
+    });
+
+    indexList.appendChild(li);
+});
+
+indexList.addEventListener('dragover', function(event){
+    event.preventDefault();
+    const dragging = indexList.querySelector('.dragging');
+    const siblings = [...indexList.querySelectorAll('.index-item:not(.dragging)')];
+    const next = siblings.find(function(s){
+        return event.clientY <= s.getBoundingClientRect().top + s.getBoundingClientRect().height / 2;
+    });
+    indexList.insertBefore(dragging, next || null);
+});
+    paperIndex.appendChild(indexList);
     });
 }
 
@@ -295,32 +402,67 @@ function saveData() {
 }
 
 function renderMemos() {
-    memoList.innerHTML = '';
-    memos.forEach(function (memo) {
-        const li = document.createElement('li');
-        li.className = 'memo-item';
-        li.innerHTML = `
-      <div class="memo-text">${parseMarkdown(memo.text)}</div>
-      <div class="memo-date">${memo.date}</div>
-      <div class="memo-btns">
-        <button class="memo-edit-btn">編集</button>
-        <button class="memo-delete-btn">削除</button>
-      </div>
-    `;
+  memoList.innerHTML = '';
 
-        li.querySelector('.memo-delete-btn').addEventListener('click', function () {
-            const index = memos.findIndex(m => m.id === memo.id);
-            memos.splice(index, 1);
-            li.remove();
-            saveData();
-        });
+  memos.forEach(function(memo, index) {
+    const li = document.createElement('li');
+    li.className = 'memo-item';
+    li.draggable = true;
+    li.dataset.index = index;
 
-        li.querySelector('.memo-edit-btn').addEventListener('click', function () {
-            editMemo(memo.id, li);
-        });
+    li.innerHTML = `
+        <span class="drag-handle">☰</span>
+        <div class="memo-content">
+            <div class="memo-text">${parseMarkdown(memo.text)}</div>
+            <div class="memo-date">${memo.date}</div>
+            <div class="memo-btns">
+            <button class="memo-edit-btn">編集</button>
+            <button class="memo-delete-btn">削除</button>
+            </div>
+        </div>
+        `;
 
-        memoList.appendChild(li);
+    li.querySelector('.memo-delete-btn').addEventListener('click', function(){
+      const index = memos.findIndex(m => m.id === memo.id);
+      memos.splice(index, 1);
+      li.remove();
+      saveData();
     });
+
+    li.querySelector('.memo-edit-btn').addEventListener('click', function(){
+      editMemo(memo.id, li);
+    });
+
+    li.addEventListener('dragstart', function(){
+      li.classList.add('dragging');
+    });
+
+    li.addEventListener('dragend', function(){
+      li.classList.remove('dragging');
+    });
+
+    memoList.appendChild(li);
+  });
+
+  // ドロップ処理
+  memoList.addEventListener('dragover', function(event){
+    event.preventDefault();
+    const dragging = memoList.querySelector('.dragging');
+    const siblings = [...memoList.querySelectorAll('li:not(.dragging)')];
+    const next = siblings.find(function(s){
+      return event.clientY <= s.getBoundingClientRect().top + s.getBoundingClientRect().height / 2;
+    });
+    memoList.insertBefore(dragging, next || null);
+  });
+
+  memoList.addEventListener('drop', function(){
+    const newOrder = [...memoList.querySelectorAll('li')].map(function(li){
+      return memos[Number(li.dataset.index)];
+    });
+    memos.length = 0;
+    newOrder.forEach(function(m){ memos.push(m); });
+    saveData();
+  });
 }
 
 function loadData() {
@@ -426,7 +568,7 @@ function editPaper(id) {
       <input type="text" class="edit-url" value="${paper.url}" />
     </div>
     <div class="form-row">
-      <label>なぜ読もうと思ったか</label>
+      <label>読む目的</label>
       <textarea class="edit-reason" rows="2">${paper.reason}</textarea>
     </div>
     <div class="form-row">
@@ -440,7 +582,6 @@ function editPaper(id) {
     <div class="form-row">
       <label>カテゴリ</label>
       <select class="edit-category">
-        <option value="" ${paper.category === '' ? 'selected' : ''}>未分類</option>
         <option value="primary" ${paper.category === 'primary' ? 'selected' : ''}>一次資料</option>
         <option value="research" ${paper.category === 'research' ? 'selected' : ''}>先行研究</option>
         <option value="draft" ${paper.category === 'draft' ? 'selected' : ''}>下書き</option>
@@ -518,13 +659,16 @@ function addTask() {
 }
 
 function renderTasks() {
-    taskList.innerHTML = '';
+  taskList.innerHTML = '';
 
-    tasks.forEach(function (task) {
-        const li = document.createElement('li');
-        li.className = 'task-item' + (task.done ? ' task-done' : '');
+  tasks.forEach(function(task, index) {
+    const li = document.createElement('li');
+    li.className = 'task-item' + (task.done ? ' task-done' : '');
+    li.draggable = true;
+    li.dataset.index = index;
 
-        li.innerHTML = `
+    li.innerHTML = `
+      <span class="drag-handle">☰</span>
       <label class="task-label">
         <input type="checkbox" class="task-checkbox" ${task.done ? 'checked' : ''} />
         <span class="task-text">${task.text}</span>
@@ -532,21 +676,52 @@ function renderTasks() {
       <button class="task-delete-btn" data-id="${task.id}">削除</button>
     `;
 
-        li.querySelector('.task-checkbox').addEventListener('change', function () {
-            task.done = this.checked;
-            li.classList.toggle('task-done', task.done);
-            saveData();
-        });
-
-        li.querySelector('.task-delete-btn').addEventListener('click', function () {
-            const index = tasks.findIndex(t => t.id === task.id);
-            tasks.splice(index, 1);
-            saveData();
-            renderTasks();
-        });
-
-        taskList.appendChild(li);
+    // チェックボックス
+    li.querySelector('.task-checkbox').addEventListener('change', function(){
+      task.done = this.checked;
+      li.classList.toggle('task-done', task.done);
+      saveData();
     });
+
+    // 削除ボタン
+    li.querySelector('.task-delete-btn').addEventListener('click', function(){
+      const index = tasks.findIndex(t => t.id === task.id);
+      tasks.splice(index, 1);
+      saveData();
+      renderTasks();
+    });
+
+    // ドラッグイベント
+    li.addEventListener('dragstart', function(){
+      li.classList.add('dragging');
+    });
+
+    li.addEventListener('dragend', function(){
+      li.classList.remove('dragging');
+    });
+
+    taskList.appendChild(li);
+  });
+
+  // ドロップ処理
+  taskList.addEventListener('dragover', function(event){
+    event.preventDefault();
+    const dragging = taskList.querySelector('.dragging');
+    const siblings = [...taskList.querySelectorAll('li:not(.dragging)')];
+    const next = siblings.find(function(s){
+      return event.clientY <= s.getBoundingClientRect().top + s.getBoundingClientRect().height / 2;
+    });
+    taskList.insertBefore(dragging, next || null);
+  });
+
+  taskList.addEventListener('drop', function(){
+    const newOrder = [...taskList.querySelectorAll('li')].map(function(li){
+      return tasks[Number(li.dataset.index)];
+    });
+    tasks.length = 0;
+    newOrder.forEach(function(t){ tasks.push(t); });
+    saveData();
+  });
 }
 
 // アプリ起動時にデータ読み込みを実行
