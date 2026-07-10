@@ -153,23 +153,85 @@ button:hover {
   white-space: pre-wrap; /* 改行をそのまま表示する */
 }
 
+/* ===== メモのテキスト表示制限 ===== */
+.memo-text-container {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1; /* ★通常時は1行だけ表示 */
+  line-clamp: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-height: 1.6em;     /* 1行分の高さに固定（line-height: 1.6 に対応） */
+  transition: max-height 0.2s ease; /* 開閉を少し滑らかにする */
+}
+
+/* ★ JavaScriptで .expanded クラスがついた時は制限を解除する */
+.memo-text-container.expanded {
+  display: block;
+  -webkit-line-clamp: none;
+  line-clamp: none;
+  max-height: none; /* 全文を表示 */
+}
+
+/* ===== 「すべて見る」ボタンのデザイン ===== */
+.memo-toggle-btn {
+  align-self: flex-start; /* 左寄せ */
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  font-size: 13px;
+  font-weight: normal;
+  padding: 2px 0;
+  margin-top: 2px;
+  cursor: pointer;
+}
+
+.memo-toggle-btn:hover {
+  text-decoration: underline;
+  opacity: 1; /* 通常ボタンのhover透過（0.85）を打ち消してくっきり見せる */
+}
+
+/* ===== メモのフッター（横並びの制御） ===== */
+.memo-footer {
+  display: flex;
+  justify-content: space-between; /* ★左端に日付、右端にボタンを配置 */
+  align-items: center;            /* ★上下中央をピタッと揃える */
+  margin-top: 4px;                /* 本文との間の微調整用余白 */
+  width: 100%;
+}
+
+/* ===== メモボタンの配置調整 ===== */
+.memo-btns {
+  display: flex;
+  gap: 6px;
+  /* justify-content: flex-end; は不要になったため削除（またはコメントアウト） */
+}
+
+/* 日付自体の位置調整（親要素のFlexで制御するため個別設定をリセット） */
 .memo-date {
   font-size: 12px;
   color: var(--color-text-sub);
 }
 
+/* 削除ボタンの個別配置をリセット */
 .memo-delete-btn {
-  align-self: flex-end;
+  /* align-self: flex-end; を削除（横並びが崩れる原因になるため） */
   padding: 4px 12px;
   font-size: 12px;
   background-color: #e0e0e0;
   color: #555;
+  border-radius: 4px; /* 他のパーツと合わせて少し角丸にすると馴染みます */
 }
 
 .memo-delete-btn:hover {
   background-color: #C95B50;
   color: white;
   opacity: 1;
+}
+
+/* 編集ボタンの角丸も揃えておく */
+.memo-edit-btn {
+  border-radius: 4px;
 }
 
 /* ===== ページ切り替え ===== */
@@ -225,6 +287,7 @@ input[type="text"]:focus {
   flex-direction: column;
   gap: 12px;
   align-items: flex-start;
+  position: relative;
 }
 
 
@@ -232,6 +295,9 @@ input[type="text"]:focus {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
+  width: 100%;           /* ★カードの横幅いっぱいに広げる */
+  padding-right: 120px;
+  gap: 16px;             /* ★タイトルとボタンがぶつからないように隙間をあける */
 }
 
 .paper-title {
@@ -239,9 +305,10 @@ input[type="text"]:focus {
   font-weight: bold;
   color: var(--color-primary);
   text-align: left;
-  align-self: center;
+  /* align-self: center; は不要なので削除またはコメントアウト */
   word-break: normal;
   overflow-wrap: break-word;
+  flex: 1;               /* ★タイトルが長い場合、ボタンを押し出さないように自動伸縮させる */
 }
 
 .paper-url {
@@ -490,8 +557,11 @@ select {
 }
 
 .paper-btns {
+  position: absolute;  /* ★絶対配置にする */
+  top: 20px;           /* ★カードの上の内側余白（padding）と同じ位置に合わせる */
+  right: 20px;         /* ★カードの右の内側余白（padding）と同じ位置に合わせる */
   display: flex;
-  gap: 6px;
+  gap: 8px;
   flex-shrink: 0;
 }
 
@@ -602,13 +672,20 @@ select {
 .drag-handle {
   cursor: grab;
   color: var(--color-text-sub);
+  opacity: 0.5;
+  transition: color 0.2s ease;
   font-size: 14px;
-  flex-shrink: 0; /* ← 縮まないようにする */
-  }
+  flex-shrink: 0;
+  line-height: 1.6;      /* メモの本文（.memo-text）の line-height: 1.6 と完全に一致させる */
+  align-self: flex-start; /* 親の並び（中央揃えなど）に影響されず、1行目の頭の高さに固定する */
+  padding-top: 1px;      /* フォント固有のわずかな重心のズレをここで微調整（環境に合わせて0〜2pxで調整してください） */
+}
 
 .dragging {
-  opacity: 0.4;
-  border: 2px dashed var(--color-primary);
+  opacity: 0.5;                             /* ★少し透け感を残す（0.4から0.5に微調整） */
+  background-color: var(--color-primary-light) !important; /* ★背景をうっすら緑（定義済みの薄いカラー）にする */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* ★少しだけ浮いているような影をつけるとさらにリアルになります */
+  border-radius: 8px !important;
 }
 
 .memo-content {
@@ -623,4 +700,42 @@ select {
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+
+/* ===== ドラッグ中のガイドライン ===== */
+
+/* 1. 通常（ドラッグしていない時）のアイテム共通設定 */
+.task-item, .memo-item, .index-item {
+  /* ★マージンは常に「上下6px」で完全に固定！ドラッグ中も一切動かしません */
+  margin-top: 6px !important;
+  margin-bottom: 6px !important;
+  position: relative;
+}
+
+/* 2. ドラッグオーバー時（上に線が出る時） */
+.drag-over-top::before {
+  content: '';
+  position: absolute;
+  top: -6px;           /* ★ -7px から -6px に微調整（上下マージンの真ん中） */
+  left: 0;
+  right: 0;
+  height: 2px;         /* ★ 4px から 2px に補正してシャープに */
+  background-color: var(--color-primary);
+  border-radius: 999px;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* 3. ドラッグオーバー時（下に線が出る時） */
+.drag-over-bottom::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;        /* ★ -7px から -6px に微調整 */
+  left: 0;
+  right: 0;
+  height: 2px;         /* ★ 4px から 2px に補正してシャープに */
+  background-color: var(--color-primary);
+  border-radius: 999px;
+  pointer-events: none;
+  z-index: 10;
 }
