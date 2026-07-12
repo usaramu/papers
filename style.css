@@ -617,6 +617,87 @@ select {
   align-items: center;
   justify-content: space-between;
   gap: 8px;
+  min-height: 40px;
+}
+
+.task-btns {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.task-edit-btn {
+  padding: 4px 12px;
+  font-size: 12px;
+  background-color: #e0e0e0;
+  color: #555;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.task-edit-btn:hover {
+  background-color: var(--color-primary-light);
+  color: var(--color-primary);
+}
+
+.task-delete-btn {
+  padding: 4px 12px;
+  font-size: 12px;
+  background-color: #e0e0e0;
+  color: #555;
+  border: none;
+  border-radius: 4px; /* メモと同様に角丸を統一 */
+}
+
+/* ★ インライン編集フォーム全体のレイアウト */
+.task-edit-form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+/* ★ 編集時の入力フィールド（スリムに調整） */
+.edit-task-input {
+  flex: 1;
+  padding: 4px 8px !important;
+  font-size: 13px;
+  height: 28px;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  outline: none;
+}
+
+.edit-task-input:focus {
+  border-color: var(--color-primary);
+}
+
+/* ★ 編集確定・キャンセルボタンの配置 */
+.task-edit-btns {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.task-save-btn {
+  padding: 4px 12px;
+  font-size: 12px;
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.task-cancel-btn {
+  padding: 4px 12px;
+  font-size: 12px;
+  background-color: #e0e0e0;
+  color: #555;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
 .task-label {
@@ -700,6 +781,7 @@ select {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  width: 100%;
 }
 
 /* ===== ドラッグ中のガイドライン ===== */
@@ -738,4 +820,95 @@ select {
   border-radius: 999px;
   pointer-events: none;
   z-index: 10;
+}
+
+/* ===== インライン編集共通スタイル ===== */
+.inline-edit-form, .inline-paper-form {
+  width: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+  align-items: stretch !important; /* 子要素を横いっぱいに引き伸ばす */
+}
+
+/* メモ編集のテキストエリア */
+.edit-memo-textarea {
+  width: 100% !important;
+  padding: 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  font-size: 14px;
+  outline: none;
+  resize: vertical;
+}
+.edit-memo-textarea:focus {
+  border-color: var(--color-primary);
+}
+
+/* 資料編集の各入力行 */
+.inline-row {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 4px !important;
+  width: 100% !important;
+  align-items: stretch !important; /* ラベルと入力欄を完全に全幅にする */
+}
+.inline-row label {
+  font-size: 12px;
+  color: var(--color-primary);
+  font-weight: bold;
+  text-align: left;
+}
+
+/* フォーム内の各入力パーツを完全にカード幅に同期させる */
+.inline-row input[type="text"], 
+.inline-row textarea, 
+.inline-row select {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  padding: 8px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  font-size: 14px;
+  outline: none;
+  background-color: var(--color-white);
+}
+.inline-row input:focus, .inline-row textarea:focus, .inline-row select:focus {
+  border-color: var(--color-primary);
+}
+
+/* ボタンの配置 */
+.inline-edit-btns {
+  display: flex !important;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 8px;
+  width: 100% !important;
+}
+.inline-save-btn {
+  padding: 8px 20px;
+  font-size: 14px;
+  background-color: var(--color-primary) !important;
+  color: white !important;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.inline-save-btn:hover {
+  opacity: 0.85;
+}
+
+/* キャンセルボタン（灰色固定） */
+.inline-cancel-btn {
+  padding: 8px 20px;
+  font-size: 14px;
+  background-color: #e0e0e0 !important;
+  color: #555 !important;
+  border: none !important;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.inline-cancel-btn:hover {
+  background-color: #d5d5d5 !important;
 }

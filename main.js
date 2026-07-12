@@ -275,19 +275,39 @@ setupDrop(memoList, 'li', memos);
 
 function editMemo(id, li) {
     const memo = memos.find(function(m) { return m.id === id; });
-    li.innerHTML = `
-        <textarea class="edit-memo-text" rows="3">${memo.text}</textarea>
-        <div style="display:flex; gap:8px; justify-content:flex-end;">
-            <button class="edit-cancel-btn">キャンセル</button>
-            <button class="edit-save-btn">保存する</button>
+    const contentArea = li.querySelector('.memo-content');
+    
+    // 元の中身を一時退避し、インライン入力フォームに書き換える
+    contentArea.innerHTML = `
+        <div class="inline-edit-form">
+            <textarea class="edit-memo-textarea" rows="3">${memo.text}</textarea>
+            <div class="inline-edit-btns">
+                <button class="inline-cancel-btn">キャンセル</button>
+                <button class="inline-save-btn">保存</button>
+            </div>
         </div>
     `;
-    li.querySelector('.edit-save-btn').addEventListener('click', function() {
-        memo.text = li.querySelector('.edit-memo-text').value.trim();
+    
+    const textarea = contentArea.querySelector('.edit-memo-textarea');
+    textarea.focus();
+
+    // Ctrl + Enter でも保存できるようにする
+    textarea.addEventListener('keydown', function(event) {
+        if (event.ctrlKey && event.key === 'Enter') save();
+    });
+
+    contentArea.querySelector('.inline-save-btn').addEventListener('click', save);
+    contentArea.querySelector('.inline-cancel-btn').addEventListener('click', function() { 
+        renderMemos(); 
+    });
+
+    function save() {
+        const newText = textarea.value.trim();
+        if (newText === '') return;
+        memo.text = newText;
         saveData();
         renderMemos();
-    });
-    li.querySelector('.edit-cancel-btn').addEventListener('click', function() { renderMemos(); });
+    }
 }
 
 // ===== 資料管理 =====
@@ -385,9 +405,10 @@ function renderPapers() {
                     paper.category === 'primary' ? '一次資料' :
                     paper.category === 'research' ? '先行研究' : '下書き'
                 }</div>` : ''}
-                <div class="paper-date">${paper.date}</div>
+                <!-- ★ ここにあった paper-date の行を削除しました -->
             </div>
         `;
+        
         card.querySelector('.paper-edit-btn').addEventListener('click', function() {
             editPaper(Number(card.id.replace('paper-', '')));
         });
@@ -407,36 +428,48 @@ function deletePaper(id) {
 
 function editPaper(id) {
     const paper = papers.find(function(p) { return p.id === id; });
-    const card  = document.getElementById('paper-' + id);
-    card.innerHTML = `
-        <div class="form-row"><label>タイトル</label><input type="text" class="edit-title" value="${paper.title}" /></div>
-        <div class="form-row"><label>URL</label><input type="text" class="edit-url" value="${paper.url}" /></div>
-        <div class="form-row"><label>読む目的</label><textarea class="edit-reason" rows="2">${paper.reason}</textarea></div>
-        <div class="form-row"><label>内容メモ</label><textarea class="edit-memo" rows="3">${paper.memo}</textarea></div>
-        <div class="form-row"><label>引用</label><textarea class="edit-citation" rows="2">${paper.citation}</textarea></div>
-        <div class="form-row"><label>カテゴリ</label>
-            <select class="edit-category">
-                <option value="primary"  ${paper.category === 'primary'  ? 'selected' : ''}>一次資料</option>
-                <option value="research" ${paper.category === 'research' ? 'selected' : ''}>先行研究</option>
-                <option value="draft"    ${paper.category === 'draft'    ? 'selected' : ''}>下書き</option>
-            </select>
-        </div>
-        <div style="display:flex; gap:8px; justify-content:flex-end;">
-            <button class="edit-cancel-btn">キャンセル</button>
-            <button class="edit-save-btn">保存する</button>
+    const card = document.getElementById('paper-' + id);
+    const contentArea = card.querySelector('.paper-content');
+    
+    // 右上の通常ボタンを一時的に非表示にする（編集中の誤操作防止）
+    const origBtns = card.querySelector('.paper-btns');
+    if (origBtns) origBtns.style.display = 'none';
+
+    contentArea.innerHTML = `
+        <div class="inline-paper-form">
+            <div class="inline-row"><label>タイトル</label><input type="text" class="edit-p-title" value="${paper.title}" /></div>
+            <div class="inline-row"><label>URL</label><input type="text" class="edit-p-url" value="${paper.url}" /></div>
+            <div class="inline-row"><label>読む目的</label><textarea class="edit-p-reason" rows="2">${paper.reason}</textarea></div>
+            <div class="inline-row"><label>内容メモ</label><textarea class="edit-p-memo" rows="3">${paper.memo}</textarea></div>
+            <div class="inline-row"><label>引用</label><textarea class="edit-p-citation" rows="2">${paper.citation}</textarea></div>
+            <div class="inline-row"><label>カテゴリ</label>
+                <select class="edit-p-category">
+                    <option value="primary"  ${paper.category === 'primary'  ? 'selected' : ''}>一次資料</option>
+                    <option value="research" ${paper.category === 'research' ? 'selected' : ''}>先行研究</option>
+                    <option value="draft"    ${paper.category === 'draft'    ? 'selected' : ''}>下書き</option>
+                </select>
+            </div>
+            <div class="inline-edit-btns">
+                <button class="inline-cancel-btn">キャンセル</button>
+                <button class="inline-save-btn">保存</button>
+            </div>
         </div>
     `;
-    card.querySelector('.edit-save-btn').addEventListener('click', function() {
-        paper.title    = card.querySelector('.edit-title').value.trim();
-        paper.url      = card.querySelector('.edit-url').value.trim();
-        paper.reason   = card.querySelector('.edit-reason').value.trim();
-        paper.memo     = card.querySelector('.edit-memo').value.trim();
-        paper.citation = card.querySelector('.edit-citation').value.trim();
-        paper.category = card.querySelector('.edit-category').value;
+
+    contentArea.querySelector('.inline-save-btn').addEventListener('click', function() {
+        paper.title    = contentArea.querySelector('.edit-p-title').value.trim();
+        paper.url      = contentArea.querySelector('.edit-p-url').value.trim();
+        paper.reason   = contentArea.querySelector('.edit-p-reason').value.trim();
+        paper.memo     = contentArea.querySelector('.edit-p-memo').value.trim();
+        paper.citation = contentArea.querySelector('.edit-p-citation').value.trim();
+        paper.category = contentArea.querySelector('.edit-p-category').value;
         saveData();
         renderPapers();
     });
-    card.querySelector('.edit-cancel-btn').addEventListener('click', function() { renderPapers(); });
+
+    contentArea.querySelector('.inline-cancel-btn').addEventListener('click', function() { 
+        renderPapers(); 
+    });
 }
 
 // ===== タスク管理 =====
@@ -469,7 +502,11 @@ function renderTasks() {
                 <input type="checkbox" class="task-checkbox" ${task.done ? 'checked' : ''} />
                 <span class="task-text">${task.text}</span>
             </label>
-            <button class="task-delete-btn" data-id="${task.id}">削除</button>
+            <!-- ★ ボタンの塊を task-btns クラスで包み、編集ボタンを追加 -->
+            <div class="task-btns">
+                <button class="task-edit-btn">編集</button>
+                <button class="task-delete-btn" data-id="${task.id}">削除</button>
+            </div>
         `;
         li.querySelector('.task-checkbox').addEventListener('change', function() {
             task.done = this.checked;
@@ -482,10 +519,55 @@ function renderTasks() {
             saveData();
             renderTasks();
         });
+        // ★ 編集ボタンのクリックイベントを追加
+        li.querySelector('.task-edit-btn').addEventListener('click', function() {
+            editTask(task.id, li);
+        });
         li.addEventListener('dragstart', function() { li.classList.add('dragging'); });
-        li.addEventListener('dragend',   function() { li.classList.remove('dragging'); });
+        li.addEventListener('dragend',   function() { 
+            li.classList.remove('dragging'); 
+            taskList.querySelectorAll('li').forEach(function(el) {
+                el.classList.remove('drag-over-top', 'drag-over-bottom');
+            });
+        });
         taskList.appendChild(li);
     });
+}
+
+function editTask(id, li) {
+    const task = tasks.find(function(t) { return t.id === id; });
+    
+    // ドラッグハンドルやチェックボックスを一時的に隠し、入力用のフォームに切り替える
+    li.innerHTML = `
+        <div class="task-edit-form">
+            <input type="text" class="edit-task-input" value="${task.text}" />
+            <div class="task-edit-btns">
+                <button class="task-cancel-btn">キャンセル</button>
+                <button class="task-save-btn">保存</button>
+            </div>
+        </div>
+    `;
+    
+    const input = li.querySelector('.edit-task-input');
+    input.focus();
+    
+    // Enterキーでも保存できるようにする
+    input.addEventListener('keydown', function(event) {
+        if (event.key === 'Enter') save();
+    });
+
+    li.querySelector('.task-save-btn').addEventListener('click', save);
+    li.querySelector('.task-cancel-btn').addEventListener('click', function() { 
+        renderTasks(); 
+    });
+
+    function save() {
+        const newText = input.value.trim();
+        if (newText === '') return;
+        task.text = newText;
+        saveData();
+        renderTasks();
+    }
 }
 
 setupDragOver(taskList, 'li');
