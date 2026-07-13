@@ -1,914 +1,749 @@
-/*色とサイズの変数定義*/
-:root{
-    --color-primary: #1F6367; /*メインカラー*/
-    --color-primary-light: #cadbdc; /* メインカラーの薄い版 */
-    --color-primary-hover: #d4dfe0; /* ホバー時の背景 */
-    --color-bg: #FCF9F5;           /* ページ背景 */
-    --color-white: #fff;           /* 白 */
-    --color-border: #ddd;          /* 境界線 */
-    --color-text: #2D3748;            /* 本文テキスト */
-    --color-text-sub: #555;        /* サブテキスト */
+/* ==========================================================================
+   1. 変数定義・基本設定
+   ========================================================================== */
+:root {
+    --color-primary: #1F6367;        /* メインカラー（深緑） */
+    --color-primary-light: #cadbdc;  /* メインカラーの薄い版 */
+    --color-primary-hover: #d4dfe0;  /* ホバー時の背景 */
+    --color-bg: #FCF9F5;              /* ページ背景（生成り） */
+    --color-white: #fff;              /* 白 */
+    --color-border: #ddd;             /* 境界線 */
+    --color-text: #2D3748;           /* 本文テキスト（ダークグレー） */
+    --color-text-sub: #555;           /* サブテキスト */
+    --color-accent-red: #C95B50;     /* アクセントカラー（赤） */
 
-    --header-height: 72px;         /* ヘッダーの高さ */
-    --sidebar-width: 200px;        /* サイドバーの幅 */
+    --header-height: 72px;            /* ヘッダーの高さ */
+    --sidebar-width: 200px;           /* サイドバーの幅 */
 }
 
-/*基本設定*/
-*{
+* {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
 
 body {
-  font-family: "Zen Kaku Gothic New", "Hiragino Sans", sans-serif;
-  background-color: var(--color-bg);
-  color: var(--color-text);
+    font-family: "Zen Kaku Gothic New", "Hiragino Sans", sans-serif;
+    background-color: var(--color-bg);
+    color: var(--color-text);
 }
 
-/*ヘッダー*/
-.site-header {
-  background-color: var(--color-primary);
-  color: var(--color-white);
-  padding: 16px 24px;
-  height: var(--header-height);
+/* タイポグラフィ */
+.site-header h1,
+.main-content h2,
+.task-inline-chapter-header,
+#task-chapter-select {
+    font-family: "Kiwi Maru", serif;
 }
 
-.site-header h1 {
-  font-size: 28px;
+/* 共通非表示クラス */
+.hidden {
+    display: none;
 }
 
-/* ===== 2カラムレイアウト ===== */
-.layout {
-  display: flex;
-  height: calc(100vh - var(--header-height));
+
+/* ==========================================================================
+   2. 共通UIパーツ（ボタン、入力フォーム）
+   ========================================================================== */
+
+/* テキスト入力・エリア共通 */
+input[type="text"],
+textarea,
+select {
+    padding: 10px 12px;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    font-size: 15px;
+    font-family: inherit;
+    outline: none;
+    background-color: var(--color-white);
 }
 
-/* ===== サイドバー ===== */
-.sidebar {
-  width: var(--sidebar-width);
-  background-color: var(--color-bg);
-  border-right: 1px solid var(--color-border);
-  padding: 16px 0;
-  position: relative; 
+input[type="text"]:focus,
+textarea:focus,
+select:focus {
+    border-color: var(--color-primary);
 }
 
-.sidebar ul {
-  list-style: none;
-}
-
-.sidebar li {
-  padding: 12px 20px;
-  cursor: pointer;
-  color: var(--color-text-sub);
-  border-radius: 4px;
-  margin: 2px 8px;
-}
-
-.sidebar li:hover {
-  background-color: var(--color-primary-hover);
-  color: var(--color-primary);
-}
-
-.sidebar > ul > li.active {
-  background-color: var(--color-primary-light);
-  color: var(--color-primary);
-  font-weight: bold;
-}
-
-/* ===== メインコンテンツ ===== */
-.main-content {
-  flex: 1;
-  padding: 32px;
-  overflow-y: auto;
-}
-
-.main-content h2 {
-  font-size: 22px;
-  margin-bottom: 16px;
-  color: #C95B50;
-}
-
-/* ===== 問いメモ帳 ===== */
-
-.memo-input-area {
-  display: flex;
-  flex-direction: column; /* 縦並び */
-  gap: 8px;               /* 要素間のすき間 */
-  margin-bottom: 24px;
-}
-
-textarea {
-  padding: 12px;
-  border: 1px solid var(--color-border);
-  border-radius: 6px;
-  font-size: 15px;
-  font-family: inherit; /* bodyのフォントを引き継ぐ */
-  resize: vertical;     /* 縦方向にだけリサイズ可能にする */
-  outline: none;
-}
-
-/* テキストエリアにフォーカスしたとき */
-textarea:focus {
-  border-color: var(--color-primary);
-}
-
+/* ボタンの基本設定 */
 button {
-  align-self: flex-end; /* 右寄せ */
-  padding: 10px 24px;
-  background-color: var(--color-primary);
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 15px;
-  cursor: pointer;
+    padding: 10px 24px;
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    border: none;
+    border-radius: 6px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
 }
 
 button:hover {
-  opacity: 0.85;
+    opacity: 0.85;
 }
 
-/* ===== メモ一覧 ===== */
-
-#memo-list {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.memo-item {
-  background-color: var(--color-white);
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-  padding: 16px;
-  display: flex;
-  flex-direction: row;
-  gap: 6px;
-}
-
-.memo-text {
-  font-size: 15px;
-  line-height: 1.6;
-  white-space: pre-wrap; /* 改行をそのまま表示する */
-}
-
-/* ===== メモのテキスト表示制限 ===== */
-.memo-text-container {
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 1; /* ★通常時は1行だけ表示 */
-  line-clamp: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-height: 1.6em;     /* 1行分の高さに固定（line-height: 1.6 に対応） */
-  transition: max-height 0.2s ease; /* 開閉を少し滑らかにする */
-}
-
-/* ★ JavaScriptで .expanded クラスがついた時は制限を解除する */
-.memo-text-container.expanded {
-  display: block;
-  -webkit-line-clamp: none;
-  line-clamp: none;
-  max-height: none; /* 全文を表示 */
-}
-
-/* ===== 「すべて見る」ボタンのデザイン ===== */
-.memo-toggle-btn {
-  align-self: flex-start; /* 左寄せ */
-  background: none;
-  border: none;
-  color: var(--color-primary);
-  font-size: 13px;
-  font-weight: normal;
-  padding: 2px 0;
-  margin-top: 2px;
-  cursor: pointer;
-}
-
-.memo-toggle-btn:hover {
-  text-decoration: underline;
-  opacity: 1; /* 通常ボタンのhover透過（0.85）を打ち消してくっきり見せる */
-}
-
-/* ===== メモのフッター（横並びの制御） ===== */
-.memo-footer {
-  display: flex;
-  justify-content: space-between; /* ★左端に日付、右端にボタンを配置 */
-  align-items: center;            /* ★上下中央をピタッと揃える */
-  margin-top: 4px;                /* 本文との間の微調整用余白 */
-  width: 100%;
-}
-
-/* ===== メモボタンの配置調整 ===== */
-.memo-btns {
-  display: flex;
-  gap: 6px;
-  /* justify-content: flex-end; は不要になったため削除（またはコメントアウト） */
-}
-
-/* 日付自体の位置調整（親要素のFlexで制御するため個別設定をリセット） */
-.memo-date {
-  font-size: 12px;
-  color: var(--color-text-sub);
-}
-
-/* 削除ボタンの個別配置をリセット */
-.memo-delete-btn {
-  /* align-self: flex-end; を削除（横並びが崩れる原因になるため） */
-  padding: 4px 12px;
-  font-size: 12px;
-  background-color: #e0e0e0;
-  color: #555;
-  border-radius: 4px; /* 他のパーツと合わせて少し角丸にすると馴染みます */
-}
-
-.memo-delete-btn:hover {
-  background-color: #C95B50;
-  color: white;
-  opacity: 1;
-}
-
-/* 編集ボタンの角丸も揃えておく */
-.memo-edit-btn {
-  border-radius: 4px;
-}
-
-/* ===== ページ切り替え ===== */
-.hidden {
-  display: none;
-}
-
-/* ===== フォーム ===== */
+/* フォームカード（資料登録用など） */
 .form-card {
-  background-color: var(--color-white);
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-  padding: 24px;
-  margin-bottom: 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+    background-color: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 24px;
+    margin-bottom: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
 }
 
 .form-row {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
 }
 
-label {
-  font-size: 13px;
-  font-weight: bold;
-  color: var(--color-text-sub);
-}
-
-input[type="text"] {
-  padding: 10px 12px;
-  border: 1px solid var(--color-border);
-  border-radius: 6px;
-  font-size: 15px;
-  font-family: inherit;
-  outline: none;
-}
-
-input[type="text"]:focus {
-  border-color: var(--color-primary);
-}
-
-/* ===== 資料カード ===== */
-.paper-card {
-  background-color: var(--color-white);
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-  padding: 20px;
-  margin-bottom: 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  align-items: flex-start;
-  position: relative;
+label, .label {
+    font-size: 13px;
+    font-weight: bold;
+    color: var(--color-text-sub);
 }
 
 
-.paper-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  width: 100%;           /* ★カードの横幅いっぱいに広げる */
-  padding-right: 120px;
-  gap: 16px;             /* ★タイトルとボタンがぶつからないように隙間をあける */
+/* ==========================================================================
+   3. 全体レイアウト（ヘッダー・サイドバー）
+   ========================================================================== */
+.site-header {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    padding: 16px 24px;
+    height: var(--header-height);
 }
 
-.paper-title {
-  font-size: 14px;
-  font-weight: bold;
-  color: var(--color-primary);
-  text-align: left;
-  /* align-self: center; は不要なので削除またはコメントアウト */
-  word-break: normal;
-  overflow-wrap: break-word;
-  flex: 1;               /* ★タイトルが長い場合、ボタンを押し出さないように自動伸縮させる */
-}
-
-.paper-url {
-  font-size: 12px;
-  color: var(--color-text);
-  word-break: break-all;
-}
-
-.paper-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.tag {
-  background-color: var(--color-primary-light);
-  color: var(--color-primary);
-  font-size: 12px;
-  padding: 2px 10px;
-  border-radius: 999px;
-}
-
-.paper-section {
-  font-size: 12px;
-  line-height: 1.6;
-  white-space: pre-wrap;
-  color:var(--color-text-sub)
-}
-
-.label {
-  display: block;
-  font-size: 12px;
-  font-weight: bold;
-  color: var(--color-text-sub);
-  color:#204445; 
-  margin-bottom: 2px;
-}
-
-.paper-date {
-  font-size: 12px;
-  color: var(--color-text-sub);
-  text-align: right;
-}
-
-.paper-delete-btn {
-  padding: 4px 12px;
-  font-size: 12px;
-  background-color: #e0e0e0;
-  color: #555;
-  flex-shrink: 0;
-}
-
-.paper-delete-btn:hover {
-  background-color: #C95B50;
-  color: white;
-  opacity: 1;
-}
-
-
-.paper-embed {
-  width: 100%;
-  height: 500px;
-  border: none;
-  border-radius: 6px;
-}
-
-/* ===== 資料リスト ===== */
-.paper-index {
-  background-color: var(--color-white);
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-  padding: 16px 24px;
-  margin-bottom: 24px;
-}
-
-.paper-index h3 {
-  font-size: 15px;
-  color: var(--color-text);
-  margin-bottom: 8px;
-}
-
-.index-list {
-  list-style: none;
-  padding-left: 0;
-}
-
-.index-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 4px 0;
-  cursor: default;
-}
-
-.index-list li {
-  margin: 4px 0;
-}
-
-.index-list li a {
-  color: var(--color-text);
-  text-decoration: none;
-  font-size: 14px;
-}
-
-.index-list li a:hover {
-  text-decoration: underline;
-}
-
-.paper-url-link {
-  display: block;
-  cursor: pointer;
-}
-
-.paper-embed-wrapper {
-  position: relative;
-}
-
-.paper-open-btn {
-  display: inline-block;
-  margin-bottom: 8px;
-  font-size: 13px;
-  color: var(--color-text-sub);
-  text-decoration: none;
-}
-
-.paper-open-btn:hover {
-  text-decoration: underline;
-}
-
-#paper-add-btn {
-  background-color: #C95B50 /* ← 好きな色に変えてください */
-}
-
-#paper-add-btn:hover {
-  background-color: #e6776d;
-}
-
-#memo-add-btn {
-  background-color: #C95B50
-}
-
-#memo-add-btn:hover {
-  background-color: #e6776d;
-}
-
-/* ヘッダーのタイトル */
 .site-header h1 {
-  font-family: "Kiwi Maru", serif;
+    font-size: 28px;
 }
 
-/* ページの見出し */
-.main-content h2 {
-  font-family: "Kiwi Maru", serif;
+.layout {
+    display: flex;
+    height: calc(100vh - var(--header-height));
+}
+
+.sidebar {
+    width: var(--sidebar-width);
+    background-color: var(--color-bg);
+    border-right: 1px solid var(--color-border);
+    padding: 16px 0;
+    position: relative; 
+}
+
+.sidebar ul {
+    list-style: none;
+}
+
+.sidebar li {
+    padding: 12px 20px;
+    cursor: pointer;
+    color: var(--color-text-sub);
+    border-radius: 4px;
+    margin: 2px 8px;
+    transition: all 0.2s ease;
+}
+
+.sidebar li:hover {
+    background-color: var(--color-primary-hover);
+    color: var(--color-primary);
+}
+
+.sidebar > ul > li.active {
+    background-color: var(--color-primary-light);
+    color: var(--color-primary);
+    font-weight: bold;
 }
 
 .sub-item {
-  padding: 8px 20px 8px 32px !important;
-  font-size: 13px;
-  color: var(--color-text-sub);
+    padding: 8px 20px 8px 32px !important;
+    font-size: 13px;
 }
 
-.sub-item:hover {
-  color: var(--color-primary);
-  
-}
-
-/* ===== サイドバーリサイザー ===== */
 #sidebar-resizer {
-  position: absolute;
-  right: 0;
-  top: 0;
-  width: 6px;
-  height: 100%;
-  cursor: col-resize;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 6px;
+    height: 100%;
+    cursor: col-resize;
 }
 
-/* ===== タブ ===== */
-.tab-bar {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 24px;
+.main-content {
+    flex: 1;
+    padding: 32px;
+    overflow-y: auto;
 }
 
-.tab-btn {
-  padding: 8px 12px;
-  background-color: var(--color-white);
-  color: var(--color-text-sub);
-  border: 1px solid var(--color-border);
-  border-radius: 999px;
-  font-size: 12px;
-  cursor: pointer;
-  align-self: auto;
+.main-content h2 {
+    font-size: 22px;
+    margin-bottom: 16px;
+    color: var(--color-accent-red);
 }
 
-.tab-btn:hover {
-  background-color: var(--color-primary-light);
-  color: var(--color-primary);
-  opacity: 1;
+
+/* ==========================================================================
+   4. やることリスト（1カラム・洗練されたモダンノート風）
+   ========================================================================== */
+.task-single-layout {
+    max-width: 640px;
+    margin-top: 20px;
 }
 
-.tab-btn.active {
-  background-color: var(--color-primary);
-  color: white;
+/* 入力エリアの横並び（高さ32pxのスリムツールバー仕様） */
+.task-input-box {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 24px;
+    align-items: center;
 }
 
-.tab-btn.active:hover {
-  opacity: 0.85;
+#task-chapter-select {
+    height: 32px;
+    padding: 0 8px;
+    font-size: 12px;
+    color: var(--color-primary);
+    flex-shrink: 0;
 }
 
-select {
-  padding: 10px 12px;
-  border: 1px solid var(--color-border);
-  border-radius: 6px;
-  font-size: 15px;
-  font-family: inherit;
-  outline: none;
-  background-color: var(--color-white);
+.task-input-box textarea {
+    flex: 1;
+    height: 32px;
+    padding: 6px 10px;
+    font-size: 13px;
+    line-height: 1.4;
+    resize: none;
 }
 
-/* ===== 編集ボタン ===== */
-.paper-edit-btn {
-  padding: 4px 12px;
-  font-size: 12px;
-  background-color: #e0e0e0;
-  color: #555;
-  margin-right: 4px;
+/* ★ 修正：タスクの追加ボタンを濃い緑（--color-primary）に統一 */
+.task-input-box button {
+    height: 32px;
+    padding: 0 16px;
+    font-size: 13px;
+    flex-shrink: 0;
+    background-color: var(--color-primary);
+}
+.task-input-box button:hover {
+    opacity: 0.85;
 }
 
-.paper-edit-btn:hover {
-  background-color: var(--color-primary-light);
-  color: var(--color-primary);
-  opacity: 1;
+/* 章ごとの美しい区切り見出し */
+.task-inline-chapter-header {
+    font-size: 12px;
+    font-weight: bold;
+    color: var(--color-accent-red);
+    letter-spacing: 0.5px;
+    padding: 24px 4px 6px 4px;
+    border-bottom: 1px dashed var(--color-border);
+    margin-bottom: 8px;
+    list-style: none;
+    cursor: default;
 }
 
-.edit-save-btn {
-  background-color: var(--color-primary);
+.task-inline-chapter-header:first-child {
+    padding-top: 4px;
 }
 
-.edit-cancel-btn {
-  background-color: #e0e0e0;
-  color: #555;
-}
-
-.edit-cancel-btn:hover {
-  opacity: 0.85;
-}
-
-.paper-btns {
-  position: absolute;  /* ★絶対配置にする */
-  top: 20px;           /* ★カードの上の内側余白（padding）と同じ位置に合わせる */
-  right: 20px;         /* ★カードの右の内側余白（padding）と同じ位置に合わせる */
-  display: flex;
-  gap: 8px;
-  flex-shrink: 0;
-}
-
-/* ===== 編集フォーム ===== */
-.edit-title,
-.edit-url,
-.edit-reason,
-.edit-memo,
-.edit-citation {
-  font-size: 11px;
-}
-
-/* ===== メモボタン ===== */
-.memo-btns {
-  display: flex;
-  gap: 6px;
-  justify-content: flex-end;
-}
-
-.memo-edit-btn {
-  padding: 4px 12px;
-  font-size: 12px;
-  background-color: #e0e0e0;
-  color: #555;
-}
-
-.memo-edit-btn:hover {
-  background-color: var(--color-primary-light);
-  color: var(--color-primary);
-  opacity: 1;
-}
-
-.edit-memo-text {
-  font-size: 13px;
-  width: 100%;
-}
-
-/* ===== タスクリスト ===== */
+/* タスクのリストアイテム */
 #task-list {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-top: 16px;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
 }
 
 .task-item {
-  background-color: var(--color-white);
-  border: 1px solid var(--color-border);
-  border-radius: 6px;
-  padding: 6px 12px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  min-height: 40px;
-}
-
-.task-btns {
-  display: flex;
-  gap: 6px;
-  flex-shrink: 0;
-}
-
-.task-edit-btn {
-  padding: 4px 12px;
-  font-size: 12px;
-  background-color: #e0e0e0;
-  color: #555;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.task-edit-btn:hover {
-  background-color: var(--color-primary-light);
-  color: var(--color-primary);
-}
-
-.task-delete-btn {
-  padding: 4px 12px;
-  font-size: 12px;
-  background-color: #e0e0e0;
-  color: #555;
-  border: none;
-  border-radius: 4px; /* メモと同様に角丸を統一 */
-}
-
-/* ★ インライン編集フォーム全体のレイアウト */
-.task-edit-form {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  width: 100%;
-}
-
-/* ★ 編集時の入力フィールド（スリムに調整） */
-.edit-task-input {
-  flex: 1;
-  padding: 4px 8px !important;
-  font-size: 13px;
-  height: 28px;
-  border: 1px solid var(--color-border);
-  border-radius: 4px;
-  outline: none;
-}
-
-.edit-task-input:focus {
-  border-color: var(--color-primary);
-}
-
-/* ★ 編集確定・キャンセルボタンの配置 */
-.task-edit-btns {
-  display: flex;
-  gap: 4px;
-  flex-shrink: 0;
-}
-
-.task-save-btn {
-  padding: 4px 12px;
-  font-size: 12px;
-  background-color: var(--color-primary);
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.task-cancel-btn {
-  padding: 4px 12px;
-  font-size: 12px;
-  background-color: #e0e0e0;
-  color: #555;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
+    padding: 12px 4px !important;
+    border: none !important;
+    border-bottom: 1px solid var(--color-border) !important;
+    border-radius: 0 !important;
+    background-color: transparent !important;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    min-height: 44px;
 }
 
 .task-label {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  cursor: pointer;
-  flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    flex: 1;
+    font-weight: normal;
 }
 
 .task-checkbox {
-  width: 16px;
-  height: 16px;
-  cursor: pointer;
-  accent-color: var(--color-primary);
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: var(--color-primary);
 }
 
 .task-text {
-  font-size: 13px;
+    font-size: 13px;
+    font-weight: normal;
+    color: var(--color-text);
+    white-space: pre-wrap;
 }
 
+/* タスク完了状態 */
 .task-done .task-text {
-  text-decoration: line-through;
-  color: var(--color-text-sub);
+    text-decoration: line-through;
+    color: var(--color-text-sub);
+}
+
+/* インライン編集フォーム */
+.task-edit-form {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+}
+
+.edit-task-input {
+    flex: 1;
+    padding: 4px 8px !important;
+    font-size: 13px;
+    height: 28px;
+}
+
+/* ボタン類（編集・削除） */
+.task-btns, .task-edit-btns {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.task-edit-btn, .task-cancel-btn, .memo-edit-btn, .paper-edit-btn {
+    padding: 4px 12px;
+    font-size: 12px;
+    background-color: #e0e0e0;
+    color: #555;
+    border-radius: 4px;
+}
+
+.task-edit-btn:hover, .memo-edit-btn:hover, .paper-edit-btn:hover {
+    background-color: var(--color-primary-light);
+    color: var(--color-primary);
+}
+
+.task-save-btn {
+    padding: 4px 12px;
+    font-size: 12px;
 }
 
 .task-delete-btn {
-  padding: 4px 12px;
-  font-size: 12px;
-  background-color: #e0e0e0;
-  color: #555;
+    padding: 4px 12px;
+    font-size: 12px;
+    background-color: #e0e0e0;
+    color: #555;
+    border-radius: 4px;
 }
 
 .task-delete-btn:hover {
-  background-color: #f28b82;
-  color: white;
-  opacity: 1;
+    background-color: #f28b82;
+    color: var(--color-white);
+    opacity: 1;
 }
 
-/* ===== タスクリストの文字を細くシンプルにする修正 ===== */
 
-.task-label {
-  font-weight: normal; /* 太字を解除して通常の細さにします */
+/* ==========================================================================
+   5. メモ・問いメモ帳
+   ========================================================================== */
+.memo-input-area {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 24px;
 }
 
-.task-text {
-  font-size: 13px;
-  font-weight: normal; /* 念のためここでも通常の設定を上書き */
-  color: var(--color-text); /* 資料リストに近い標準のテキスト色にします */
+/* ★ 修正：メモの追加ボタン、および資料登録ボタンをすべて濃い緑（--color-primary）に統一 */
+.memo-input-area button,
+#paper-add-btn {
+    background-color: var(--color-primary);
 }
 
-/* ===== ドラッグ＆ドロップ ===== */
-.drag-handle {
-  cursor: grab;
-  color: var(--color-text-sub);
-  opacity: 0.5;
-  transition: color 0.2s ease;
-  font-size: 14px;
-  flex-shrink: 0;
-  line-height: 1.6;      /* メモの本文（.memo-text）の line-height: 1.6 と完全に一致させる */
-  align-self: flex-start; /* 親の並び（中央揃えなど）に影響されず、1行目の頭の高さに固定する */
-  padding-top: 1px;      /* フォント固有のわずかな重心のズレをここで微調整（環境に合わせて0〜2pxで調整してください） */
+.memo-input-area button:hover,
+#paper-add-btn:hover {
+    opacity: 0.85;
 }
 
-.dragging {
-  opacity: 0.5;                             /* ★少し透け感を残す（0.4から0.5に微調整） */
-  background-color: var(--color-primary-light) !important; /* ★背景をうっすら緑（定義済みの薄いカラー）にする */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* ★少しだけ浮いているような影をつけるとさらにリアルになります */
-  border-radius: 8px !important;
+/* 資料登録ボタンはアクセントの赤のまま残します */
+#paper-add-btn {
+    background-color: var(--color-accent-red);
+}
+
+/* ホバー時の挙動を調整（濃い緑ボタンは少し透過、赤ボタンは元の色に） */
+.memo-input-area button:hover {
+    opacity: 0.85;
+}
+#paper-add-btn:hover {
+    background-color: #e6776d;
+}
+
+.memo-item {
+    background-color: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 16px;
+    display: flex;
+    flex-direction: row;
+    gap: 6px;
 }
 
 .memo-content {
-  flex: 1; /* 残りの横幅をすべて使う */
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.memo-text {
+    font-size: 15px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+}
+
+.memo-text-container {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-height: 1.6em;
+    transition: max-height 0.2s ease;
+}
+
+.memo-text-container.expanded {
+    display: block;
+    -webkit-line-clamp: none;
+    line-clamp: none;
+    max-height: none;
+}
+
+.memo-toggle-btn {
+    align-self: flex-start;
+    background: none;
+    border: none;
+    color: var(--color-primary);
+    font-size: 13px;
+    padding: 2px 0;
+    margin-top: 2px;
+    cursor: pointer;
+}
+
+.memo-toggle-btn:hover {
+    text-decoration: underline;
+}
+
+.memo-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 4px;
+    width: 100%;
+}
+
+.memo-date, .paper-date {
+    font-size: 12px;
+    color: var(--color-text-sub);
+}
+
+.memo-btns {
+    display: flex;
+    gap: 6px;
+}
+
+.memo-delete-btn {
+    padding: 4px 12px;
+    font-size: 12px;
+    background-color: #e0e0e0;
+    color: #555;
+    border-radius: 4px;
+}
+
+.memo-delete-btn:hover {
+    background-color: var(--color-accent-red);
+    color: var(--color-white);
+    opacity: 1;
+}
+
+
+/* ==========================================================================
+   6. 資料管理（タブ、カード、インデックス）
+   ========================================================================== */
+
+/* タブバー */
+.tab-bar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+}
+
+.tab-btn {
+    padding: 8px 12px;
+    background-color: var(--color-white);
+    color: var(--color-text-sub);
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.tab-btn:hover {
+    background-color: var(--color-primary-light);
+    color: var(--color-primary);
+}
+
+.tab-btn.active {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+}
+
+/* 資料インデックス（リスト形式） */
+.paper-index {
+    background-color: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 16px 24px;
+    margin-bottom: 24px;
+}
+
+.index-list {
+    list-style: none;
+}
+
+.index-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 0;
+}
+
+.index-list li a {
+    color: var(--color-text);
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.index-list li a:hover {
+    text-decoration: underline;
+}
+
+/* 資料カード単体 */
+.paper-card {
+    background-color: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+    position: relative;
 }
 
 .paper-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  width: 100%;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
 }
 
-/* ===== ドラッグ中のガイドライン ===== */
-
-/* 1. 通常（ドラッグしていない時）のアイテム共通設定 */
-.task-item, .memo-item, .index-item {
-  /* ★マージンは常に「上下6px」で完全に固定！ドラッグ中も一切動かしません */
-  margin-top: 6px !important;
-  margin-bottom: 6px !important;
-  position: relative;
+.paper-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+    padding-right: 120px;
+    gap: 16px;
 }
 
-/* 2. ドラッグオーバー時（上に線が出る時） */
-.drag-over-top::before {
-  content: '';
-  position: absolute;
-  top: -6px;           /* ★ -7px から -6px に微調整（上下マージンの真ん中） */
-  left: 0;
-  right: 0;
-  height: 2px;         /* ★ 4px から 2px に補正してシャープに */
-  background-color: var(--color-primary);
-  border-radius: 999px;
-  pointer-events: none;
-  z-index: 10;
+.paper-title {
+    font-size: 14px;
+    font-weight: bold;
+    color: var(--color-primary);
+    word-break: normal;
+    overflow-wrap: break-word;
+    flex: 1;
 }
 
-/* 3. ドラッグオーバー時（下に線が出る時） */
-.drag-over-bottom::after {
-  content: '';
-  position: absolute;
-  bottom: -6px;        /* ★ -7px から -6px に微調整 */
-  left: 0;
-  right: 0;
-  height: 2px;         /* ★ 4px から 2px に補正してシャープに */
-  background-color: var(--color-primary);
-  border-radius: 999px;
-  pointer-events: none;
-  z-index: 10;
+.paper-url {
+    font-size: 12px;
+    color: var(--color-text);
+    word-break: break-all;
 }
 
-/* ===== インライン編集共通スタイル ===== */
+.paper-section {
+    font-size: 12px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    color: var(--color-text-sub);
+}
+
+.paper-section .label {
+    display: block;
+    color: #204445; 
+    margin-bottom: 2px;
+}
+
+.paper-btns {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    gap: 8px;
+}
+
+.paper-delete-btn {
+    padding: 4px 12px;
+    font-size: 12px;
+    background-color: #e0e0e0;
+    color: #555;
+    border-radius: 4px;
+}
+
+.paper-delete-btn:hover {
+    background-color: var(--color-accent-red);
+    color: var(--color-white);
+    opacity: 1;
+}
+
+/* Google Docs等の埋め込みプレビュー */
+.paper-embed-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.paper-open-btn {
+    display: inline-block;
+    margin-bottom: 8px;
+    font-size: 13px;
+    color: var(--color-text-sub);
+    text-decoration: none;
+}
+
+.paper-open-btn:hover {
+    text-decoration: underline;
+}
+
+.paper-embed {
+    width: 100%;
+    height: 500px;
+    border: none;
+    border-radius: 6px;
+}
+
+
+/* ==========================================================================
+   7. インライン編集・ドラッグ＆ドロップ共通機能
+   ========================================================================== */
+
+/* インライン編集共通スタイル */
 .inline-edit-form, .inline-paper-form {
-  width: 100% !important;
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 12px !important;
-  align-items: stretch !important; /* 子要素を横いっぱいに引き伸ばす */
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
 }
 
-/* メモ編集のテキストエリア */
 .edit-memo-textarea {
-  width: 100% !important;
-  padding: 8px;
-  border: 1px solid var(--color-border);
-  border-radius: 6px;
-  font-size: 14px;
-  outline: none;
-  resize: vertical;
-}
-.edit-memo-textarea:focus {
-  border-color: var(--color-primary);
+    width: 100%;
+    padding: 8px;
+    resize: vertical;
 }
 
-/* 資料編集の各入力行 */
 .inline-row {
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 4px !important;
-  width: 100% !important;
-  align-items: stretch !important; /* ラベルと入力欄を完全に全幅にする */
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: 100%;
 }
+
 .inline-row label {
-  font-size: 12px;
-  color: var(--color-primary);
-  font-weight: bold;
-  text-align: left;
+    font-size: 12px;
+    color: var(--color-primary);
 }
 
-/* フォーム内の各入力パーツを完全にカード幅に同期させる */
-.inline-row input[type="text"], 
-.inline-row textarea, 
-.inline-row select {
-  width: 100% !important;
-  max-width: 100% !important;
-  box-sizing: border-box !important;
-  padding: 8px 10px;
-  border: 1px solid var(--color-border);
-  border-radius: 6px;
-  font-size: 14px;
-  outline: none;
-  background-color: var(--color-white);
-}
-.inline-row input:focus, .inline-row textarea:focus, .inline-row select:focus {
-  border-color: var(--color-primary);
-}
-
-/* ボタンの配置 */
 .inline-edit-btns {
-  display: flex !important;
-  gap: 8px;
-  justify-content: flex-end;
-  margin-top: 8px;
-  width: 100% !important;
-}
-.inline-save-btn {
-  padding: 8px 20px;
-  font-size: 14px;
-  background-color: var(--color-primary) !important;
-  color: white !important;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-}
-.inline-save-btn:hover {
-  opacity: 0.85;
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    margin-top: 8px;
 }
 
-/* キャンセルボタン（灰色固定） */
+.inline-save-btn {
+    padding: 8px 20px;
+    font-size: 14px;
+}
+
 .inline-cancel-btn {
-  padding: 8px 20px;
-  font-size: 14px;
-  background-color: #e0e0e0 !important;
-  color: #555 !important;
-  border: none !important;
-  border-radius: 6px;
-  cursor: pointer;
+    padding: 8px 20px;
+    font-size: 14px;
+    background-color: #e0e0e0;
+    color: #555;
+    border-radius: 6px;
 }
 .inline-cancel-btn:hover {
-  background-color: #d5d5d5 !important;
+    background-color: #d5d5d5;
+}
+
+/* ドラッグ＆ドロップ用スタイル */
+.drag-handle {
+    cursor: grab;
+    color: var(--color-text-sub);
+    opacity: 0.5;
+    transition: color 0.2s ease;
+    font-size: 14px;
+    flex-shrink: 0;
+    line-height: 1.6;
+    align-self: flex-start;
+    padding-top: 1px;
+}
+
+.dragging {
+    opacity: 0.5;
+    background-color: var(--color-primary-light) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-radius: 8px !important;
+}
+
+/* ガイドライン（並び替え時の線） */
+.task-item, .memo-item, .index-item {
+    margin-top: 6px !important;
+    margin-bottom: 6px !important;
+    position: relative;
+}
+
+.drag-over-top::before {
+    content: '';
+    position: absolute;
+    top: -6px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background-color: var(--color-primary);
+    border-radius: 999px;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.drag-over-bottom::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background-color: var(--color-primary);
+    border-radius: 999px;
+    pointer-events: none;
+    z-index: 10;
 }

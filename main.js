@@ -8,9 +8,11 @@ const memoAddBtn = document.getElementById('memo-add-btn');
 const memoList   = document.getElementById('memo-list');
 const paperAddBtn = document.getElementById('paper-add-btn');
 const paperList   = document.getElementById('paper-list');
-const taskInput  = document.getElementById('task-input');
-const taskAddBtn = document.getElementById('task-add-btn');
-const taskList   = document.getElementById('task-list');
+
+// 最上部でのエラーを防ぐため、タスク用のグローバル変数はここで宣言のみ行います
+let taskInput  = null;
+let taskAddBtn = null;
+let taskList   = null;
 
 // ===== ページ切り替え =====
 const navItems = {
@@ -26,50 +28,88 @@ const pages = {
 
 function showPage(name) {
     Object.keys(pages).forEach(function(key) {
-        pages[key].classList.add('hidden');
-        navItems[key].classList.remove('active');
+        if (pages[key]) {
+            pages[key].classList.add('hidden');
+        }
+        if (navItems[key]) {
+            navItems[key].classList.remove('active');
+        }
     });
-    pages[name].classList.remove('hidden');
-    navItems[name].classList.add('active');
+    
+    if (pages[name]) {
+        pages[name].classList.remove('hidden');
+    }
+    if (navItems[name]) {
+        navItems[name].classList.add('active');
+    }
 
     const subItems = document.querySelectorAll('.sub-item');
     subItems.forEach(function(item) { item.classList.add('hidden'); });
 
     if (name === 'paper') {
-        document.getElementById('nav-paper-form').classList.remove('hidden');
-        document.getElementById('nav-paper-index').classList.remove('hidden');
-        document.getElementById('nav-paper-cards').classList.remove('hidden');
+        const pForm = document.getElementById('nav-paper-form');
+        const pIndex = document.getElementById('nav-paper-index');
+        const pCards = document.getElementById('nav-paper-cards');
+        if (pForm) pForm.classList.remove('hidden');
+        if (pIndex) pIndex.classList.remove('hidden');
+        if (pCards) pCards.classList.remove('hidden');
     }
     if (name === 'memo') {
-        document.getElementById('nav-memo-form').classList.remove('hidden');
-        document.getElementById('nav-memo-list').classList.remove('hidden');
+        const mForm = document.getElementById('nav-memo-form');
+        const mList = document.getElementById('nav-memo-list');
+        if (mForm) mForm.classList.remove('hidden');
+        if (mList) mList.classList.remove('hidden');
+        
+        // メモタブが開かれた瞬間に、非表示バグを回避してテキストの高さを再計算・描画します
+        renderMemos();
     }
 }
 
-navItems.memo.addEventListener('click',  function() { showPage('memo'); });
-navItems.paper.addEventListener('click', function() { showPage('paper'); });
-navItems.task.addEventListener('click',  function() { showPage('task'); });
+if (navItems.memo)  navItems.memo.addEventListener('click',  function() { showPage('memo'); });
+if (navItems.paper) navItems.paper.addEventListener('click', function() { showPage('paper'); });
+if (navItems.task)  navItems.task.addEventListener('click',  function() { showPage('task'); });
 
-document.getElementById('nav-paper-form').addEventListener('click', function(e) {
-    e.stopPropagation();
-    document.getElementById('section-form').scrollIntoView({ behavior: 'smooth', block: 'start' });
-});
-document.getElementById('nav-paper-index').addEventListener('click', function(e) {
-    e.stopPropagation();
-    document.getElementById('section-index').scrollIntoView({ behavior: 'smooth', block: 'start' });
-});
-document.getElementById('nav-paper-cards').addEventListener('click', function(e) {
-    e.stopPropagation();
-    document.getElementById('section-cards').scrollIntoView({ behavior: 'smooth', block: 'start' });
-});
-document.getElementById('nav-memo-form').addEventListener('click', function(e) {
-    e.stopPropagation();
-    document.getElementById('section-memo-form').scrollIntoView({ behavior: 'smooth', block: 'start' });
-});
-document.getElementById('nav-memo-list').addEventListener('click', function(e) {
-    e.stopPropagation();
-    document.getElementById('section-memo-list').scrollIntoView({ behavior: 'smooth', block: 'start' });
-});
+const navPaperForm = document.getElementById('nav-paper-form');
+const navPaperIndex = document.getElementById('nav-paper-index');
+const navPaperCards = document.getElementById('nav-paper-cards');
+const navMemoForm = document.getElementById('nav-memo-form');
+const navMemoList = document.getElementById('nav-memo-list');
+
+if (navPaperForm) {
+    navPaperForm.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const el = document.getElementById('section-form');
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+}
+if (navPaperIndex) {
+    navPaperIndex.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const el = document.getElementById('section-index');
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+}
+if (navPaperCards) {
+    navPaperCards.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const el = document.getElementById('section-cards');
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+}
+if (navMemoForm) {
+    navMemoForm.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const el = document.getElementById('section-memo-form');
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+}
+if (navMemoList) {
+    navMemoList.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const el = document.getElementById('section-memo-list');
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+}
 
 // ===== Markdown変換 =====
 function parseMarkdown(text) {
@@ -109,22 +149,20 @@ function loadData() {
 
 // ===== ドラッグ＆ドロップ共通関数 =====
 function setupDragOver(list, selector) {
+    if (!list) return;
     list.addEventListener('dragover', function(event) {
         event.preventDefault();
         const mainContent = document.querySelector('.main-content');
         if (mainContent) {
             const rect = mainContent.getBoundingClientRect();
-            const relativeY = event.clientY - rect.top; // 親要素内でのマウスのY座標
+            const relativeY = event.clientY - rect.top;
 
-            // スクロールを発火させる端の検知エリア（上下40px）
             const threshold = 40; 
-            const scrollSpeed = 8; // スクロールの速さ（ピクセル）
+            const scrollSpeed = 8; 
 
             if (relativeY < threshold) {
-                // マウスが上端に近づいたら上にスクロール
                 mainContent.scrollTop -= scrollSpeed;
             } else if (rect.height - relativeY < threshold) {
-                // マウスが下端に近づいたら下にスクロール
                 mainContent.scrollTop += scrollSpeed;
             }
         }
@@ -144,45 +182,37 @@ function setupDragOver(list, selector) {
 }
 
 function setupDrop(list, selector, dataArray, onDrop) {
+    if (!list) return;
     list.addEventListener('drop', function(event) {
         event.preventDefault();
         const dragging = list.querySelector('.dragging');
-        if (!dragging) return; // 安全対策
+        if (!dragging) return;
 
-        // 現在、上に横線が出ている要素、または下に横線が出ている要素を探す
         const nextTop = list.querySelector(selector + '.drag-over-top');
         const nextBottom = list.querySelector(selector + '.drag-over-bottom');
         
-        // 横線のクラスをすべてクリア
         list.querySelectorAll(selector).forEach(function(el) {
             el.classList.remove('drag-over-top', 'drag-over-bottom');
         });
 
-        // 挿入位置（どの要素の前に差し込むか）を決定
         let nextElement = null;
         if (nextTop) {
-            // 上に線がある要素の「前」に挿入
             nextElement = nextTop;
         } else if (nextBottom) {
-            // 下に線がある要素（＝リストの最後尾の要素）の「後ろ」に挿入
             nextElement = nextBottom.nextElementSibling;
         } else {
-            // どちらの線も出ていない場合は、安全のためマウス位置から計算
             const siblings = [...list.querySelectorAll(selector + ':not(.dragging)')];
             nextElement = siblings.find(function(s) {
                 return event.clientY <= s.getBoundingClientRect().top + s.getBoundingClientRect().height / 2;
             });
         }
 
-        // 実際のDOM要素を移動させる
         list.insertBefore(dragging, nextElement);
 
-        // ★追加：ドロップ完了直後、リスト内のすべての横線クラスを強制的にクリアする
         list.querySelectorAll(selector).forEach(function(el) {
             el.classList.remove('drag-over-top', 'drag-over-bottom');
         });
 
-        // 配列（データ）の並び順を現在のDOMの並び順に同期
         const newOrder = [...list.querySelectorAll(selector)].map(function(el) {
             return dataArray[Number(el.dataset.index)];
         });
@@ -195,12 +225,17 @@ function setupDrop(list, selector, dataArray, onDrop) {
 }
 
 // ===== メモ =====
-memoAddBtn.addEventListener('click', function() { addMemo(); });
-memoInput.addEventListener('keydown', function(event) {
-    if (event.ctrlKey && event.key === 'Enter') addMemo();
-});
+if (memoAddBtn) {
+    memoAddBtn.addEventListener('click', function() { addMemo(); });
+}
+if (memoInput) {
+    memoInput.addEventListener('keydown', function(event) {
+        if (event.ctrlKey && event.key === 'Enter') addMemo();
+    });
+}
 
 function addMemo() {
+    if (!memoInput) return;
     const text = memoInput.value.trim();
     if (text === '') return;
     const dateStr = getDateStr();
@@ -213,6 +248,7 @@ function addMemo() {
 }
 
 function renderMemos() {
+    if (!memoList) return;
     memoList.innerHTML = '';
     memos.forEach(function(memo, index) {
         const li = document.createElement('li');
@@ -226,8 +262,6 @@ function renderMemos() {
                     <div class="memo-text">${parseMarkdown(memo.text)}</div>
                 </div>
                 <button class="memo-toggle-btn">すべて見る</button>
-                
-                <!-- ★ 日付とボタンを1つのフッターエリアにまとめる -->
                 <div class="memo-footer">
                     <div class="memo-date">${memo.date}</div>
                     <div class="memo-btns">
@@ -245,15 +279,21 @@ function renderMemos() {
         memoList.appendChild(li);
 
         const hasNewLine = memo.text.includes('\n');
-        const isOverflowing = textEl.scrollWidth > container.clientWidth || textEl.scrollHeight > container.clientHeight;
+        
+        // ★修正点：非表示タブの時は横幅が0になるため、安全に文字数オーバーを判定します
+        const isOverflowing = (container && textEl && container.clientWidth > 0) 
+            ? (textEl.scrollWidth > container.clientWidth || textEl.scrollHeight > container.clientHeight)
+            : memo.text.length > 40; // 幅が取れないロード時は文字数で暫定判定
 
-        if (hasNewLine || isOverflowing) {
-            toggleBtn.addEventListener('click', function() {
-                const isExpanded = container.classList.toggle('expanded');
-                toggleBtn.textContent = isExpanded ? '閉じる' : 'すべて見る';
-            });
-        } else {
-            toggleBtn.remove();
+        if (toggleBtn) {
+            if (hasNewLine || isOverflowing) {
+                toggleBtn.addEventListener('click', function() {
+                    const isExpanded = container.classList.toggle('expanded');
+                    toggleBtn.textContent = isExpanded ? '閉じる' : 'すべて見る';
+                });
+            } else {
+                toggleBtn.remove();
+            }
         }
 
         li.querySelector('.memo-delete-btn').addEventListener('click', function() {
@@ -277,7 +317,6 @@ function editMemo(id, li) {
     const memo = memos.find(function(m) { return m.id === id; });
     const contentArea = li.querySelector('.memo-content');
     
-    // 元の中身を一時退避し、インライン入力フォームに書き換える
     contentArea.innerHTML = `
         <div class="inline-edit-form">
             <textarea class="edit-memo-textarea" rows="3">${memo.text}</textarea>
@@ -291,7 +330,6 @@ function editMemo(id, li) {
     const textarea = contentArea.querySelector('.edit-memo-textarea');
     textarea.focus();
 
-    // Ctrl + Enter でも保存できるようにする
     textarea.addEventListener('keydown', function(event) {
         if (event.ctrlKey && event.key === 'Enter') save();
     });
@@ -311,7 +349,9 @@ function editMemo(id, li) {
 }
 
 // ===== 資料管理 =====
-paperAddBtn.addEventListener('click', function() { addPaper(); });
+if (paperAddBtn) {
+    paperAddBtn.addEventListener('click', function() { addPaper(); });
+}
 
 function addPaper() {
     const title    = document.getElementById('paper-title').value.trim();
@@ -334,8 +374,10 @@ function addPaper() {
 }
 
 function renderPapers() {
+    if (!paperList) return;
     paperList.innerHTML = '';
     const paperIndex = document.getElementById('paper-index');
+    if (!paperIndex) return;
     paperIndex.innerHTML = '';
 
     const indexList = document.createElement('ul');
@@ -347,22 +389,18 @@ function renderPapers() {
         li.draggable = true;
         li.dataset.index = index;
         li.innerHTML = `<span class="drag-handle">☰</span><a href="#paper-${paper.id}">${paper.title}</a>`;
-        // ⭕ 【ここに差し替えます】
         li.addEventListener('dragstart', function() { li.classList.add('dragging'); });
         li.addEventListener('dragend',   function() { li.classList.remove('dragging'); });
         indexList.appendChild(li);
     });
 
-    // 「やること」「メモ」と同じ共通関数を資料管理のインデックスにも適用
     setupDragOver(indexList, '.index-item');
     setupDrop(indexList, '.index-item', papers, function() {
-        // 1. 左の順序が変わったら、右側のカードの並び順も連動させる
         papers.forEach(function(p) {
             const card = document.getElementById('paper-' + p.id);
             if (card) paperList.appendChild(card);
         });
         
-        // 2. 「やること」等と違い丸ごと再描画しないため、ここでインデックス番号を最新にする
         [...indexList.querySelectorAll('.index-item')].forEach(function(item, idx) {
             item.dataset.index = idx;
         });
@@ -405,7 +443,6 @@ function renderPapers() {
                     paper.category === 'primary' ? '一次資料' :
                     paper.category === 'research' ? '先行研究' : '下書き'
                 }</div>` : ''}
-                <!-- ★ ここにあった paper-date の行を削除しました -->
             </div>
         `;
         
@@ -431,7 +468,6 @@ function editPaper(id) {
     const card = document.getElementById('paper-' + id);
     const contentArea = card.querySelector('.paper-content');
     
-    // 右上の通常ボタンを一時的に非表示にする（編集中の誤操作防止）
     const origBtns = card.querySelector('.paper-btns');
     if (origBtns) origBtns.style.display = 'none';
 
@@ -472,16 +508,50 @@ function editPaper(id) {
     });
 }
 
+
 // ===== タスク管理 =====
-taskAddBtn.addEventListener('click', function() { addTask(); });
-taskInput.addEventListener('keydown', function(event) {
-    if (event.key === 'Enter') addTask();
+
+document.addEventListener('DOMContentLoaded', function() {
+    taskInput = document.getElementById('task-input');
+    taskAddBtn = document.getElementById('task-add-btn');
+    taskList = document.getElementById('task-list');
+
+    if (taskAddBtn) {
+        taskAddBtn.addEventListener('click', function() { addTask(); });
+    }
+    if (taskInput) {
+        taskInput.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault(); 
+                addTask();
+            }
+        });
+    }
+    
+    if (taskList) {
+        setupDragOver(taskList, 'li');
+        setupDrop(taskList, 'li', tasks);
+    }
+    
+    renderTasks();
 });
 
 function addTask() {
+    if (!taskInput) taskInput = document.getElementById('task-input');
+    if (!taskInput) return;
+
     const text = taskInput.value.trim();
     if (text === '') return;
-    const task = { id: Date.now(), text: text, done: false };
+    
+    const chapterSelect = document.getElementById('task-chapter-select');
+    const chosenChapter = chapterSelect ? chapterSelect.value : '1';
+
+    const task = {
+        id:      Date.now(),
+        text:    text,
+        chapter: chosenChapter, 
+        done:    false,
+    };
     tasks.push(task);
     saveData();
     renderTasks();
@@ -490,24 +560,54 @@ function addTask() {
 }
 
 function renderTasks() {
+    if (!taskList) taskList = document.getElementById('task-list');
+    if (!taskList) return;
     taskList.innerHTML = '';
-    tasks.forEach(function(task, index) {
+    
+    const chapterTitles = {
+        '1': '第1章 序論',
+        '2': '第2章 歴史的背景',
+        '3': '第3章 史料批判・分析',
+        '4': '第4章 考察・議論',
+        '5': '第5章 結論'
+    };
+
+    const displayTasks = [...tasks].filter(function(t) { return t !== null && typeof t === 'object'; }).sort(function(a, b) {
+        if (!a.chapter) return 1;
+        if (!b.chapter) return -1;
+        return a.chapter.localeCompare(b.chapter);
+    });
+
+    let lastRenderedChapter = null;
+
+    displayTasks.forEach(function(task) {
+        if (task.chapter !== lastRenderedChapter) {
+            if (task.chapter && chapterTitles[task.chapter]) {
+                const headerLi = document.createElement('li');
+                headerLi.className = 'task-inline-chapter-header';
+                headerLi.innerText = chapterTitles[task.chapter];
+                taskList.appendChild(headerLi);
+            }
+            lastRenderedChapter = task.chapter;
+        }
+
         const li = document.createElement('li');
         li.className = 'task-item' + (task.done ? ' task-done' : '');
         li.draggable = true;
-        li.dataset.index = index;
+        li.dataset.index = tasks.indexOf(task);
+        
         li.innerHTML = `
             <span class="drag-handle">☰</span>
             <label class="task-label">
                 <input type="checkbox" class="task-checkbox" ${task.done ? 'checked' : ''} />
-                <span class="task-text">${task.text}</span>
+                <span class="task-text">${parseMarkdown(task.text)}</span>
             </label>
-            <!-- ★ ボタンの塊を task-btns クラスで包み、編集ボタンを追加 -->
             <div class="task-btns">
                 <button class="task-edit-btn">編集</button>
                 <button class="task-delete-btn" data-id="${task.id}">削除</button>
             </div>
         `;
+        
         li.querySelector('.task-checkbox').addEventListener('change', function() {
             task.done = this.checked;
             li.classList.toggle('task-done', task.done);
@@ -519,7 +619,6 @@ function renderTasks() {
             saveData();
             renderTasks();
         });
-        // ★ 編集ボタンのクリックイベントを追加
         li.querySelector('.task-edit-btn').addEventListener('click', function() {
             editTask(task.id, li);
         });
@@ -537,7 +636,6 @@ function renderTasks() {
 function editTask(id, li) {
     const task = tasks.find(function(t) { return t.id === id; });
     
-    // ドラッグハンドルやチェックボックスを一時的に隠し、入力用のフォームに切り替える
     li.innerHTML = `
         <div class="task-edit-form">
             <input type="text" class="edit-task-input" value="${task.text}" />
@@ -551,7 +649,6 @@ function editTask(id, li) {
     const input = li.querySelector('.edit-task-input');
     input.focus();
     
-    // Enterキーでも保存できるようにする
     input.addEventListener('keydown', function(event) {
         if (event.key === 'Enter') save();
     });
@@ -570,9 +667,6 @@ function editTask(id, li) {
     }
 }
 
-setupDragOver(taskList, 'li');
-setupDrop(taskList, 'li', tasks);
-
 // ===== タブ切り替え =====
 const tabBtns = document.querySelectorAll('.tab-btn');
 tabBtns.forEach(function(btn) {
@@ -586,9 +680,12 @@ tabBtns.forEach(function(btn) {
 function filterPapers(tab) {
     document.querySelectorAll('.paper-card').forEach(function(card) {
         const paper = papers.find(function(p) { return p.id === Number(card.id.replace('paper-', '')); });
-        card.style.display = (tab === 'all' || paper.category === tab) ? 'block' : 'none';
+        if (card && paper) {
+            card.style.display = (tab === 'all' || paper.category === tab) ? 'block' : 'none';
+        }
     });
     const paperIndex = document.getElementById('paper-index');
+    if (!paperIndex) return;
     paperIndex.innerHTML = '';
     const indexList = document.createElement('ul');
     indexList.className = 'index-list';
@@ -604,14 +701,16 @@ function filterPapers(tab) {
 // ===== サイドバーリサイズ =====
 const resizer = document.getElementById('sidebar-resizer');
 const sidebar = document.querySelector('.sidebar');
-resizer.addEventListener('mousedown', function(event) {
-    event.preventDefault();
-    document.addEventListener('mousemove', onMouseMove);
-    document.addEventListener('mouseup', onMouseUp);
-});
+if (resizer) {
+    resizer.addEventListener('mousedown', function(event) {
+        event.preventDefault();
+        document.addEventListener('mousemove', onMouseMove);
+        document.addEventListener('mouseup', onMouseUp);
+    });
+}
 function onMouseMove(event) {
     const newWidth = event.clientX;
-    if (newWidth > 100 && newWidth < 400) { sidebar.style.width = newWidth + 'px'; }
+    if (newWidth > 100 && newWidth < 400 && sidebar) { sidebar.style.width = newWidth + 'px'; }
 }
 function onMouseUp() {
     document.removeEventListener('mousemove', onMouseMove);
