@@ -187,6 +187,7 @@ label, .label {
 /* ==========================================================================
    4. やることリスト（1カラム・洗練されたモダンノート風）
    ========================================================================== */
+
 .task-single-layout {
     max-width: 480px;
     margin-top: 20px;
@@ -202,6 +203,7 @@ label, .label {
 
 #task-chapter-select {
     height: 32px;
+    width: 69px;
     padding: 0 8px;
     font-size: 12px;
     color: var(--color-primary);
@@ -217,13 +219,12 @@ label, .label {
     resize: none;
 }
 
-/* ★ 修正：タスクの追加ボタンを濃い緑（--color-primary）に統一 */
 .task-input-box button {
     height: 32px;
     padding: 0 16px;
     font-size: 13px;
     flex-shrink: 0;
-    background-color: var(--color-primary);
+    background-color: var(--color-accent-red);
 }
 .task-input-box button:hover {
     opacity: 0.85;
@@ -232,7 +233,7 @@ label, .label {
 /* 章ごとの美しい区切り見出し */
 .task-inline-chapter-header {
     font-size: 12px;
-    font-weight: bold;
+    font-weight: normal;
     color: var(--color-accent-red);
     letter-spacing: 0.5px;
     padding: 24px 4px 6px 4px;
@@ -363,7 +364,7 @@ label, .label {
 /* ★ 修正：メモの追加ボタン、および資料登録ボタンをすべて濃い緑（--color-primary）に統一 */
 .memo-input-area button,
 #paper-add-btn {
-    background-color: var(--color-primary);
+    background-color: var(--color-accent-red);
 }
 
 .memo-input-area button:hover,
