@@ -565,11 +565,12 @@ function renderTasks() {
     taskList.innerHTML = '';
     
     const chapterTitles = {
-        '1': '第1章 序論',
-        '2': '第2章 歴史的背景',
-        '3': '第3章 史料批判・分析',
-        '4': '第4章 考察・議論',
-        '5': '第5章 結論'
+        '1': '第１章　序論',
+        '2': '第２章　ピンダーリーとは',
+        '3': '第３章　ボーパール侵攻とその歴史的背景',
+        '4': '第４章　英国史料におけるピンダーリー像',
+        '5': '第５章　ボーパール史料におけるピンダーリー',
+        '9': 'その他'
     };
 
     const displayTasks = [...tasks].filter(function(t) { return t !== null && typeof t === 'object'; }).sort(function(a, b) {

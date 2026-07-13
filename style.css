@@ -188,7 +188,7 @@ label, .label {
    4. やることリスト（1カラム・洗練されたモダンノート風）
    ========================================================================== */
 .task-single-layout {
-    max-width: 640px;
+    max-width: 480px;
     margin-top: 20px;
 }
 
@@ -263,7 +263,7 @@ label, .label {
     align-items: center;
     justify-content: space-between;
     gap: 8px;
-    min-height: 44px;
+    min-height: 32px;
 }
 
 .task-label {
