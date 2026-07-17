@@ -615,10 +615,12 @@ function renderTasks() {
             saveData();
         });
         li.querySelector('.task-delete-btn').addEventListener('click', function() {
-            const i = tasks.findIndex(function(t) { return t.id === task.id; });
-            tasks.splice(i, 1);
-            saveData();
-            renderTasks();
+            const i = tasks.findIndex(function(t) { return t && t.id === task.id; });
+            if (i !== -1) {
+                tasks.splice(i, 1);
+                saveData();
+                renderTasks();
+            }
         });
         li.querySelector('.task-edit-btn').addEventListener('click', function() {
             editTask(task.id, li);
