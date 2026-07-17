@@ -637,7 +637,8 @@ function renderTasks() {
 }
 
 function editTask(id, li) {
-    const task = tasks.find(function(t) { return t.id === id; });
+    const task = tasks.find(function(t) { return t && t.id === id; });
+    if (!task) return;
     
     li.innerHTML = `
         <div class="task-edit-form">
